@@ -50,6 +50,3 @@ updateAddress() *
 getSalesData() ** // ABSOLUTELY LAST
 getItemsOnSale() // LEAVE FOR LAST
 getMostSoldItems() // LEAVE FOR LAST
-
-
-testing merging conflicts or wahatever you call them
