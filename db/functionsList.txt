@@ -7,12 +7,16 @@ addProduct() **
 getProductsById()
 updateProduct() **
 removeProduct() **
-
-getAllCategories()
 addCategory() **
-getPhotosByProductId()
+getAllCategories()
 attachPhotoToProductId()
-attachCategoryToProductId()
+getPhotosByProductId()
+
+
+attachCategoryToProductId() // Frontend??
+
+
+
 
 User.js
 getAllUsers() **

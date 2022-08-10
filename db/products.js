@@ -92,24 +92,110 @@ try {
 }
 }
 
+async function createCategory({name, product_id}){
+    try {
+        const {
+            rows: [product]
+        } = await client.query(
+            `
+            INSERT into categories(name, product_id)
+            VALUES($1, $2)
+            RETURNING *;
+            `,
+            [name, product_id]
+        );
+        return product
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 async function createInitialCategories() {
     console.log('Starting to create categories...');
     try {
-      const usersToCreate = [
-        { email: 'albert', password: 'bertie99', firstName: `Albert`, lastName: `Sanchez`, isAdmin: false, isActive: true },
-        { email: 'sandra', password: 'sandra123', firstName: `Sandra`, lastName: `Hills`, isAdmin: false, isActive: true },
-        { email: 'glamgal', password: 'glamgal123', firstName: `Glamgal`, lastName: `Dwarf`, isAdmin: false, isActive: true },
+      const categoriesToCreate = [
+        { name: 'Consoles', product_id: 1 },
+        { name: 'Software', product_id: 2 },
+        { name: 'Hardware', product_id: 3  },
       ];
-      const users = await Promise.all(usersToCreate.map(createUser));
+      const categories = await Promise.all(categoriesToCreate.map(createCategory));
   
-      console.log('Users created:');
-      console.log(users);
-      console.log('Finished creating users!');
+      console.log('Categories created:');
+      console.log(categories);
+      console.log('Finished creating categories!');
     } catch (error) {
-      console.error('Error creating users!');
+      console.error('Error creating categories!');
       throw error;
     }
   }
 
+async function getAllCategories(){
+    try {
+        const { rows } = await client.query(
+          `
+          SELECT *
+          FROM categories
+        `
+        );
+        console.log("These are all the categories: ", rows)
+        return rows;
+      } catch (error) {
+        console.error(error);
+      }
+}
 
-module.exports = {createProduct, getAllProducts, getProductsById, updateProduct, destroyProduct}
+async function attachPhotoToProduct({product_id, url, priority}){
+    try {
+        const {
+            rows: [product]
+        } = await client.query(
+            `
+            INSERT into product_photos(product_id, url, priority)
+            VALUES($1, $2, $3)
+            RETURNING *;
+            `,
+            [product_id, url, priority]
+        );
+        return product
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+async function createInitialPhotos() {
+    console.log('Starting to create photos...');
+    try {
+      const photosToCreate = [
+        { product_id: 1 ,url:"https://upload.wikimedia.org/wikipedia/commons/6/60/Disk_II.jpg" ,priority: 1},
+        { product_id: 1 ,url:"http://oldcomputers.net/pics/ti994-monitor.jpg" ,priority: 2},
+        { product_id: 2, url:"http://oldcomputers.net/pics/ti994-left.jpg" ,priority: 1 },
+        { product_id: 3, url:"https://upload.wikimedia.org/wikipedia/commons/8/8d/Epson-hx-20.jpg" ,priority: 1},
+      ];
+      const photos = await Promise.all(photosToCreate.map(attachPhotoToProduct));
+  
+      console.log('Photos created:');
+      console.log(photos);
+      console.log('Finished creating photos!');
+    } catch (error) {
+      console.error('Error creating photos!');
+      throw error;
+    }
+  }
+
+async function getPhotosByProductId(product_id){
+    try {
+        const {
+          rows
+        } = await client.query(`
+        SELECT *    
+        FROM product_photos
+        WHERE product_id=${product_id};
+        `);
+        console.log("These are the photos: ", rows)
+        return rows;
+      } catch (error) {
+        console.error(error);
+      }
+}
+
+module.exports = {createProduct, getAllProducts, getProductsById, updateProduct, destroyProduct, createInitialCategories, getAllCategories, createInitialPhotos, getPhotosByProductId}
