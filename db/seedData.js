@@ -10,7 +10,11 @@ let productId=1;
 
 const {
   createUser,
+  getUserById
 } = require('./users');
+const {
+  createCart
+} = require('./carts')
 
 const {
   createProduct
@@ -200,6 +204,24 @@ async function createInitialProducts() {
     throw error;
   }
 }
+async function createInitialCarts() {
+  console.log('Starting to create carts...');
+  try {
+    const user1 = await getUserById(1);
+    console.log("fetched user 1: ", user1)
+    const user2 = await getUserById(2);
+    const user3 = await getUserById(3);
+    const myUsers = [user1, user2, user3];
+    const carts = await Promise.all(myUsers.map(createCart));
+
+    console.log('Carts created:');
+    console.log(carts);
+    console.log('Finished creating products!');
+  } catch (error) {
+    console.error('Error creating products!');
+    throw error;
+  }
+}
 
 
 async function rebuildDB() {
@@ -208,6 +230,7 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialProducts();
+    await createInitialCarts();
   } catch (error) {
     console.log('Error during rebuildDB');
     throw error;
