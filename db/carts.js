@@ -62,4 +62,4 @@ async function getCartsByUser({ id }) {
     }catch (error) { throw error }
 }
 
-module.exports = {}
+module.exports = { createCart }
