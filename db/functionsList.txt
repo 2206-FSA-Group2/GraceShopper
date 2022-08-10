@@ -10,6 +10,7 @@ getAllCategories()
 addCategory() **
 getPhotosByProductId()
 attachPhotoToProductId()
+attachCategoryToProductId()
 
 User.js
 getAllUsers() **
