@@ -1,11 +1,13 @@
 Products.js
+getProductsByInput() // Frontend functionality
+getRecentArrivals() // Frontend
+
 getAllProducts()
-updateProduct() **
 addProduct() **
-removeProduct() **
-getProductsByInput()
 getProductsById()
-getRecentArrivals()
+updateProduct() **
+removeProduct() **
+
 getAllCategories()
 addCategory() **
 getPhotosByProductId()
