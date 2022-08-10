@@ -1,3 +1,6 @@
 const client = require("./client");
+const { rebuildDB } = require('./seedData');
 
-module.exports = {}
+rebuildDB()
+  .catch(console.error)
+  .finally(() => client.end());
