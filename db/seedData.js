@@ -8,6 +8,10 @@ const categoryArr = [];
 const photoArr = [];
 let productId=1;
 
+const {
+  createUser,
+} = require('./users');
+
 //read the inventory seed file and create objects to be used by product table seeder function.
 fs.createReadStream("./product_seed.csv")
   .pipe(parse({ delimeter: ',', from_line: 2 }))
@@ -155,5 +159,37 @@ async function createTables() {
   }
 }
 
+async function createInitialUsers() {
+  console.log('Starting to create users...');
+  try {
+    const usersToCreate = [
+      { email: 'albert', password: 'bertie99', firstName: `Albert`, lastName: `Sanchez`, isAdmin: false, isActive: true },
+      { email: 'sandra', password: 'sandra123', firstName: `Sandra`, lastName: `Hills`, isAdmin: false, isActive: true },
+      { email: 'glamgal', password: 'glamgal123', firstName: `Glamgal`, lastName: `Dwarf`, isAdmin: false, isActive: true },
+    ];
+    const users = await Promise.all(usersToCreate.map(createUser));
 
-createTables();
+    console.log('Users created:');
+    console.log(users);
+    console.log('Finished creating users!');
+  } catch (error) {
+    console.error('Error creating users!');
+    throw error;
+  }
+}
+
+
+async function rebuildDB() {
+  try {
+    await dropTables();
+    await createTables();
+    await createInitialUsers();
+  } catch (error) {
+    console.log('Error during rebuildDB');
+    throw error;
+  }
+}
+
+module.exports = {
+  rebuildDB
+}
