@@ -19,7 +19,7 @@ try {
 }
 }
 async function getUserByEmail(email){
-    try{
+    try{ 
         const {
             rows: [user],
         } = await client.query(
