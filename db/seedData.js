@@ -13,7 +13,7 @@ fs.createReadStream("./product_seed.csv")
   .pipe(parse({ delimeter: ',', from_line: 2 }))
   //for each line of the file, store the data in the appropriate object
   .on("data", function (row) {
-    categoryArr.push({"id": row[0]-0, 
+    categoryArr.push({"id": row[0]-0,
                       "name": row[1], 
                       "product_id": productId});
     itemArr.push({"name":row[2],
@@ -45,37 +45,115 @@ console.log("the photo entries are:",photoArr);
   })
 
 
+async function dropTables(){
+  console.log("Dropping all tables") 
+  await client.query(
+     `DROP TABLE IF EXISTS wishlist_items;
+     DROP TABLE IF EXISTS orders;
+     DROP TABLE IF EXISTS order_status;
+     DROP TABLE IF EXISTS addresses;
+     DROP TABLE IF EXISTS cart_items;
+     DROP TABLE IF EXISTS carts;
+     DROP TABLE IF EXISTS reviews;
+     DROP TABLE IF EXISTS users;
+     DROP TABLE IF EXISTS categories;
+     DROP TABLE IF EXISTS product_photos;
+     DROP TABLE IF EXISTS products;
+     `
+   )
+}
+async function createTables() {
+  await dropTables();
+  console.log("Starting to build tables...");
+  // create all tables, in the correct order
+  try {
+    await client.query(
+      `CREATE TABLE products (
+        id SERIAL PRIMARY KEY,
+              name VARCHAR(255) UNIQUE NOT NULL,
+              description VARCHAR(255) NOT NULL,
+              price NUMERIC NOT NULL,
+              quantity_on_hand INTEGER,
+              is_active BOOLEAN DEFAULT true
+      );
+      CREATE TABLE product_photos (
+        id SERIAL PRIMARY KEY,
+        product_id INTEGER REFERENCES products(id) NOT NULL,
+        url VARCHAR(255) NOT NULL,
+        priority INTEGER
+      );
+      CREATE TABLE categories(
+        id INTEGER PRIMARY KEY,
+        name VARCHAR(255) UNIQUE NOT NULL,
+        product_id INTEGER REFERENCES products(id) NOT NULL
+      );
 
-// async function createTables() {
-//   console.log("Starting to build tables...");
-//   // create all tables, in the correct order
-//   try {
-//     await client.query(
-//       `CREATE TABLE products (
-//         id SERIAL PRIMARY KEY,
-//               name VARCHAR(255) UNIQUE NOT NULL,
-//               description VARCHAR(255) NOT NULL,
-//               price NUMERIC NOT NULL,
-//               quantity_on_hand INTEGER,
-//               is_active BOOLEAN DEFAULT true
-//       );
-//       CREATE TABLE product_photos (
-//         id SERIAL PRIMARY KEY,
-//         product_id INTEGER REFERENCES products(id) NOT NULL,
-//         url VARCHAR(255) NOT NULL,
-//         priority INTEGER
-//       );
-//       CREATE TABLE categories(
-//         id INTEGER PRIMARY KEY,
-//         name VARCHAR(255) UNIQUE NOT NULL,
-//         product_id INTEGER REFERENCES products(id) NOT NULL
-//       );
-//       `
-//     );
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+      CREATE TABLE users(
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
+        first_name VARCHAR(255) NOT NULL,
+        is_admin BOOLEAN DEFAULT false,
+        is_active BOOLEAN DEFAULT true
+      );
+      CREATE TABLE reviews(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        product_id INTEGER REFERENCES products(id),
+        rating INTEGER NOT NULL,
+        title VARCHAR(255),
+        description VARCHAR(255)
+      );
+
+      CREATE TABLE carts(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        purchased BOOLEAN DEFAULT false
+      );
+
+      CREATE TABLE cart_items(
+        id SERIAL PRIMARY KEY,
+        cart_id INTEGER REFERENCES carts(id),
+        product_id INTEGER REFERENCES products(id),
+        quantity INTEGER NOT NULL,
+        price NUMERIC NOT NULL
+      );
+      
+      CREATE TABLE addresses(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        label VARCHAR(255),
+        street1 VARCHAR(255) NOT NULL,
+        street2 VARCHAR(255),
+        city VARCHAR(255) NOT NULL,
+        state VARCHAR(2) NOT NULL,
+        zip INTEGER NOT NULL 
+      );
+
+      CREATE TABLE order_status(
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255)
+      );
+
+      CREATE TABLE orders(
+        id SERIAL PRIMARY KEY,
+        cart_id INTEGER REFERENCES carts(id),
+        address_id INTEGER REFERENCES addresses(id),
+        status INTEGER REFERENCES order_status(id)
+      );
+
+      CREATE TABLE wishlist_items(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        product_id INTEGER REFERENCES products(id)
+      );
+      `
+    );
+  } catch (error) {
+    throw error;
+  }
+}
 
 
-// createTables();
+createTables();
