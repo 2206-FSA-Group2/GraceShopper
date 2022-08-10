@@ -1,7 +1,7 @@
 const client = require("./client");
 
 // Adds a product to our db, this takes an object as parameter, returns a product object
-async function addProduct({name, description, price, quantity, is_active}){
+async function createProduct({name, description, price, quantity, isActive}){
     try {
         const {
             rows: [product]
@@ -12,7 +12,7 @@ async function addProduct({name, description, price, quantity, is_active}){
             ON CONFLICT (name) DO NOTHING
             RETURNING *;
             `,
-            [name, description, price, quantity, is_active]
+            [name, description, price, quantity, isActive]
         );
         return product
     } catch (error) {
@@ -21,4 +21,4 @@ async function addProduct({name, description, price, quantity, is_active}){
 }
 
 
-module.exports = {}
+module.exports = {createProduct}
