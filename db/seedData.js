@@ -12,6 +12,10 @@ const {
   createUser,
 } = require('./users');
 
+const {
+  createProduct
+} = require('./products');
+
 //read the inventory seed file and create objects to be used by product table seeder function.
 fs.createReadStream("./product_seed.csv")
   .pipe(parse({ delimeter: ',', from_line: 2 }))
@@ -42,10 +46,10 @@ fs.createReadStream("./product_seed.csv")
     console.log(error.message)
   })
   .on("end",function () {
-    console.log("finished reading inventory file")
-    console.log("the items are:",itemArr)
-console.log("the category entries are:",categoryArr)
-console.log("the photo entries are:",photoArr);
+//     console.log("finished reading inventory file")
+//     console.log("the items are:",itemArr)
+// console.log("the category entries are:",categoryArr)
+// console.log("the photo entries are:",photoArr);
   })
 
 
@@ -178,12 +182,32 @@ async function createInitialUsers() {
   }
 }
 
+async function createInitialProducts() {
+  console.log('Starting to create products...');
+  try {
+    const productsToCreate = [
+      { name: 'PlayStation1', description: 'Everything works, brand new!', price: 150, quantity: 5, isActive: true },
+      { name: 'PlayStation2', description: 'Barely works', price: 25, quantity: 1, isActive: true  },
+      { name: 'Gameboy Color', description: 'Still sealed! Never opened', price: 100, quantity: 4, isActive: true  },
+    ];
+    const products = await Promise.all(productsToCreate.map(createProduct));
+
+    console.log('Products created:');
+    console.log(products);
+    console.log('Finished creating products!');
+  } catch (error) {
+    console.error('Error creating products!');
+    throw error;
+  }
+}
+
 
 async function rebuildDB() {
   try {
     await dropTables();
     await createTables();
     await createInitialUsers();
+    await createInitialProducts();
   } catch (error) {
     console.log('Error during rebuildDB');
     throw error;
