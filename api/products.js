@@ -31,7 +31,20 @@ router.post("/", requireAdmin, async (req, res, next) => {
   }
 });
 
-// PATCH /api/routines/:productId
+//GET /api/products/:productId
+router.get("/:productId", async (req, res, next) => {
+  const id = Number(req.params.productId);
+
+  try {
+    const product = await getProductsById(id)
+    res.send(product);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+
+// PATCH /api/products/:productId
 router.patch("/:productId", requireAdmin, async (req, res, next) => {
   const id = Number(req.params.productId);
 
@@ -47,7 +60,7 @@ router.patch("/:productId", requireAdmin, async (req, res, next) => {
   }
 });
 
-// DELETE /api/routines/:productId
+// DELETE /api/products/:productId
 router.delete("/:productId", requireAdmin, async (req, res, next) => {
   const id = Number(req.params.productId);
 
@@ -60,8 +73,8 @@ router.delete("/:productId", requireAdmin, async (req, res, next) => {
   }
 });
 
-// POST /api/:productId/category
-router.post("/:productId/category", requireAdmin, async (req, res, next) => {
+// POST /api/products/category/:productId
+router.post("/category/:productId", requireAdmin, async (req, res, next) => {
 
   const { name, product_id} = req.body;
 
@@ -76,8 +89,8 @@ router.post("/:productId/category", requireAdmin, async (req, res, next) => {
   }
 });
 
-// POST /api/:productId/addPhoto
-router.post("/:productId/addPhoto", requireAdmin, async (req, res, next) => {
+// POST /api/products/addPhoto/:productId
+router.post("/addPhoto/:productId", requireAdmin, async (req, res, next) => {
 
   const {product_id, url, priority} = req.body;
 
@@ -92,7 +105,7 @@ router.post("/:productId/addPhoto", requireAdmin, async (req, res, next) => {
   }
 });
 
-// GET /api/categories
+// GET /api/products/categories
 router.get("/categories", async (req, res, next) => {
   try {
     const categories = await getAllCategories();
@@ -102,7 +115,7 @@ router.get("/categories", async (req, res, next) => {
   }
 });
 
-// GET /api/photos/:productId
+// GET /api/products/photos/:productId
 router.get("/photos/:productId", async (req, res, next) => {
   const id = Number(req.params.productId);
 
@@ -114,15 +127,5 @@ router.get("/photos/:productId", async (req, res, next) => {
   }
 });
 
-router.get("/:productId", async (req, res, next) => {
-  const id = Number(req.params.productId);
-
-  try {
-    const product = await getProductsById(id)
-    res.send(product);
-  } catch ({ name, message }) {
-    next({ name, message, status: 401 });
-  }
-});
 
 module.exports = router;
