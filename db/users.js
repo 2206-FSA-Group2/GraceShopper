@@ -12,7 +12,7 @@ try {
         `INSERT INTO users(email, password, first_name, last_name, is_admin, is_active)
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT (email) DO NOTHING
-        RETURNING *
+        RETURNING *;
         `,
         [email, password, firstName, lastName, isAdmin, isActive]
     );
@@ -45,7 +45,7 @@ async function getUserByEmail(email){
         } = await client.query(
             `SELECT *
             FROM users
-            WHERE email=$1
+            WHERE email=$1;
             `
             [email]
         );
@@ -63,7 +63,7 @@ async function getUserById(userId){
             `
             SELECT id, email
             FROM users
-            WHERE id=$1
+            WHERE id=$1;
             `,
             [userId]
         );
@@ -91,6 +91,7 @@ async function updateUser({id, ...fields}){
 `,
       Object.values(fields)
     );
+    delete user.password
     return user;
   } catch (error) {
     throw error;
@@ -106,9 +107,10 @@ async function updatePassword ({id, password}){
             UPDATE users
             SET password=${password}
             WHERE id =${id}
-            RETURNING *
+            RETURNING *;
             `
         );
+        delete user.password
         return user
     } catch (error){
         throw error
@@ -125,10 +127,11 @@ async function destroyUser(id){
             UPDATE users
             SET is_active = false
             WHERE id=$1
-            RETURNING *
+            RETURNING *;
             `,
             [id]
         );
+        delete user.password
         return user
     } catch (error){
         throw error
@@ -145,10 +148,11 @@ async function reactivateUser(id){
             UPDATE users
             SET is_active = true
             WHERE id=$1
-            RETURNING *
+            RETURNING *;
             `,
             [id]
         );
+        delete user.password
         return user
     } catch (error){
         throw error
@@ -163,7 +167,7 @@ async function getAllUsers(){
         } = await client.query(
             `SELECT *
             FROM users
-            RETURNING *
+            RETURNING (email, first_name, last_name, is_active, is_admin);
             `
         );
         return users
