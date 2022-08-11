@@ -133,7 +133,7 @@ async function getAllCategories(){
     try {
         const { rows } = await client.query(
           `
-          SELECT *
+          SELECT DISTINCT name
           FROM categories
         `
         );
