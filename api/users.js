@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken")
-const { requireUser } = require ('./utils')
-const { getUserByEmail, createUser, getUser, getUserById } = require ('../db/users')
+const { requireUser, requireAdmin } = require ('./utils')
+const { getUserByEmail, createUser, getUser, getUserById, destroyUser, reactivateUser } = require ('../db/users')
 
 // POST /api/users/register
 router.post("/register", async (req, res, next) => {
@@ -89,5 +89,37 @@ router.post("/register", async (req, res, next) => {
     }
   });
   
+  router.patch("/deactivation", requireUser, async (req, res, next) => {
+    const id = req.user.id
+    try {
+    
+        res.send(await destroyUser(id))
+    } catch ({name, message}){
+        next ({name, message, status: 401})
+    }
+  })
+
+  router.patch("/reactivation", requireAdmin, async (req, res, next)=>{
+    const { id } = req.body
+    try {
+        const _user = await getUserByEmail(email)
+        if (_user && _user.isActive){
+            next({
+                name: "User is already active",
+                message: "User is already active",
+            
+            })
+        } else {
+            next({
+                name: "UserDoesNotExist",
+                message: "User Does not exist"
+            })
+        }
+        res.send (await reactivateUser(id))
+    } catch ({name, message}){
+        next ({name, message, status: 401})
+    }
+  })
+
 
 module.exports = router;
