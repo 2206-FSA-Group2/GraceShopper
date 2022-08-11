@@ -198,4 +198,4 @@ async function getPhotosByProductId(product_id){
       }
 }
 
-module.exports = {createProduct, getAllProducts, getProductsById, updateProduct, destroyProduct, createInitialCategories, getAllCategories, createInitialPhotos, getPhotosByProductId}
+module.exports = {createProduct, getAllProducts, getProductsById, updateProduct, destroyProduct, createInitialCategories, getAllCategories, createInitialPhotos, getPhotosByProductId, assignCategory, attachPhotoToProduct}

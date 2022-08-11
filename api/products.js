@@ -1,32 +1,128 @@
 const express = require("express");
-const { getAllProducts } = require("../db");
+const { getAllProducts, createProduct, updateProduct, destroyProduct, assignItemToCart, assignCategory, attachPhotoToProduct, getAllCategories, getPhotosByProductId, getProductsById } = require("../db");
 const router = express.Router();
-const { requireUser, requireAdmin } = require ('./utils')
+const { requireUser, requireAdmin } = require("./utils");
 
 // GET /api/products
 router.get("/", async (req, res, next) => {
-    try {
-      const products = await getAllProducts();
-      res.send(products);
-    } catch ({ name, message }) {
-      next({ name, message, status: 401 });
-    }
-  });
+  try {
+    const products = await getAllProducts();
+    res.send(products);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
 
-  // POST /api/products
+// POST /api/products
 router.post("/", requireAdmin, async (req, res, next) => {
-    const userId = req.user.id;
-    const {  } = req.body;
-    const obj = { creatorId: userId, isPublic: isPublic, name: name, goal: goal };
-    try {
-      const newRoutine = await createRoutine(obj);
-      res.send(newRoutine);
-    } catch ({ name, message }) {
-      next({ name, message, status: 401 });
-    }
-  });
-  
-  
+  const { name, description, price, quantity, isActive } = req.body;
 
+  try {
+    const newProduct = await createProduct({
+      name,
+      description,
+      price,
+      quantity,
+      isActive,
+    });
+    res.send(newProduct);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// PATCH /api/routines/:productId
+router.patch("/:productId", requireAdmin, async (req, res, next) => {
+  const id = Number(req.params.productId);
+
+  const { name, description, price, quantity, isActive } = req.body;
+
+  try {
+    const updatedProduct = await updateProduct({id, name, description, price, quantity, isActive });
+
+    res.send(updatedProduct);
+
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// DELETE /api/routines/:productId
+router.delete("/:productId", requireAdmin, async (req, res, next) => {
+  const id = Number(req.params.productId);
+
+  try {
+
+    const deletedProduct = await destroyProduct(id);
+    res.send(deletedProduct);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// POST /api/:productId/category
+router.post("/:productId/category", requireAdmin, async (req, res, next) => {
+
+  const { name, product_id} = req.body;
+
+  try {
+
+    const newCategory = await assignCategory({name, product_id})
+
+    res.send(newCategory);
+
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// POST /api/:productId/addPhoto
+router.post("/:productId/addPhoto", requireAdmin, async (req, res, next) => {
+
+  const {product_id, url, priority} = req.body;
+
+  try {
+
+    const newPhoto = await attachPhotoToProduct({product_id, url, priority})
+
+    res.send(newPhoto);
+    
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// GET /api/categories
+router.get("/categories", async (req, res, next) => {
+  try {
+    const categories = await getAllCategories();
+    res.send(categories);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// GET /api/photos/:productId
+router.get("/photos/:productId", async (req, res, next) => {
+  const id = Number(req.params.productId);
+
+  try {
+    const photos = await getPhotosByProductId(id)
+    res.send(photos);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+router.get("/:productId", async (req, res, next) => {
+  const id = Number(req.params.productId);
+
+  try {
+    const product = await getProductsById(id)
+    res.send(product);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
 
 module.exports = router;
