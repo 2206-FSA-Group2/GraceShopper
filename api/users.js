@@ -122,4 +122,26 @@ router.post("/register", async (req, res, next) => {
   })
 
 
+  router.patch("/me/:userId", requireUser, async (req, res, next)=>{
+    const { email, firstName, lastName } = req.body
+    const id  = req.params.userId
+    try {
+      const updatedUser = await updateUser(id, email, firstName, lastName)
+      res.send (updatedUser)
+    } catch ({name, message}){
+      next ({name, message, status: 401})
+  }
+  })
+
+  router.patch("/me/:userId", requireUser, async (req, res, next)=>{
+    const {password} = req.body
+    const id = req.params.userId
+    try {
+      const updatedPassword = await updatePassword(id, password)
+      res.send(updatedPassword)
+    } catch ({name, message}){
+      next ({name, message, status: 401})
+  }
+  })
+
 module.exports = router;
