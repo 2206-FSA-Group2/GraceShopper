@@ -1,7 +1,7 @@
 const client = require("./client");
 
 //creates cart item with specified numeric inputs and returns a cartItem object
-export async function assignItemToCart(cartId, productId, quantity, price) {
+async function assignItemToCart(cartId, productId, quantity, price) {
   try {
     const {
       rows: [cartItem],
@@ -21,7 +21,7 @@ export async function assignItemToCart(cartId, productId, quantity, price) {
 }
 
 //removes cart_items record associated with the supplied object -- returns nothing.
-export async function removeItemFromCart({ id }) {
+async function removeItemFromCart({ id }) {
   try {
     await client.query(
       `
@@ -87,4 +87,4 @@ async function attachItemsToCarts(carts) {
   }
 }
 
-module.exports = { attachItemsToCarts, createCartItem, deleteCartItem, editCartItemQuantity };
+module.exports = { attachItemsToCarts, assignItemToCart, removeItemFromCart, editCartItemQuantity };

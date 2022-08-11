@@ -118,7 +118,7 @@ async function updatePassword ({id, password}){
 }
 
 //"DELETE" function that is actually and update call
-async function destroyUser(id){
+async function deactivateUser(id){
     try {
         const {
             rows:[user],
@@ -186,7 +186,7 @@ module.exports = {
     getUserById,
     updateUser,
     updatePassword,
-    destroyUser,
+    deactivateUser,
     reactivateUser,
     getAllUsers
 }
