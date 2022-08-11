@@ -118,7 +118,7 @@ async function createInitialCategories() {
         { name: 'Software', product_id: 2 },
         { name: 'Hardware', product_id: 3  },
       ];
-      const categories = await Promise.all(categoriesToCreate.map(createCategory));
+      const categories = await Promise.all(categoriesToCreate.map(assignCategory));
   
       console.log('Categories created:');
       console.log(categories);

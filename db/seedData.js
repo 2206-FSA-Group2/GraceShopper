@@ -95,8 +95,8 @@ async function createTables() {
         priority INTEGER
       );
       CREATE TABLE categories(
-        id INTEGER PRIMARY KEY,
-        name VARCHAR(255) UNIQUE NOT NULL,
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
         product_id INTEGER REFERENCES products(id) NOT NULL
       );
 
