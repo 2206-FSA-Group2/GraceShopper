@@ -1,7 +1,7 @@
 const client = require("./client");
 
 //creates cart item with specified numeric inputs and returns a cartItem object
-export async function createCartItem(cartId, productId, quantity, price) {
+export async function assignItemToCart(cartId, productId, quantity, price) {
   try {
     const {
       rows: [cartItem],
@@ -21,7 +21,7 @@ export async function createCartItem(cartId, productId, quantity, price) {
 }
 
 //removes cart_items record associated with the supplied object -- returns nothing.
-export async function deleteCartItem({ id }) {
+export async function removeItemFromCart({ id }) {
   try {
     await client.query(
       `
@@ -34,15 +34,33 @@ export async function deleteCartItem({ id }) {
   }
 }
 
-async function attachItemsToCarts(carts) {
-    const cartsToReturn = [...carts];
-    const binds = carts.map((_,index)=> `$${index+1}`).join(", ");
-    const cartIds = carts.map((cart)=>cart.id);
-    if (!cartIds?.length) return [];
+//takes cartItem object, returns cartItem object
+async function editCartItemQuantity({ id, quantity }) {
+  try {
+    const result = await client.query(
+      `
+        UPDATE cart_items
+        SET quantity = $1
+        WHERE id = $2
+        `,
+      [quantity, id]
+    );
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 
-    try {
-        const { rows: products } = await client.query(
-            `
+
+async function attachItemsToCarts(carts) {
+  const cartsToReturn = [...carts];
+  const binds = carts.map((_, index) => `$${index + 1}`).join(", ");
+  const cartIds = carts.map((cart) => cart.id);
+  if (!cartIds?.length) return [];
+
+  try {
+    const { rows: products } = await client.query(
+      `
             SELECT products.id,
                    products.name, 
                    products.description, 
@@ -54,17 +72,19 @@ async function attachItemsToCarts(carts) {
             ON cart_items.product_id = products.id 
             WHERE cart_items.cart_id IN (${binds});
         `,
-        cartIds)
+      cartIds
+    );
 
-        for (const cart of cartsToReturn) {
-            const productsToAdd = products.filter((product) => product.cart_id === cart.id
-            )
-            cart.items = productsToAdd;
-        }
-        return cartsToReturn;
-    }catch (error) { throw error }
+    for (const cart of cartsToReturn) {
+      const productsToAdd = products.filter(
+        (product) => product.cart_id === cart.id
+      );
+      cart.items = productsToAdd;
+    }
+    return cartsToReturn;
+  } catch (error) {
+    throw error;
+  }
 }
 
-
-
-module.exports = { attachItemsToCart, createCartItem, deleteCartItem };
+module.exports = { attachItemsToCarts, createCartItem, deleteCartItem, editCartItemQuantity };
