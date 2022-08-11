@@ -92,7 +92,7 @@ try {
 }
 }
 
-async function createCategory({name, product_id}){
+async function assignCategory({name, product_id}){
     try {
         const {
             rows: [product]
