@@ -288,6 +288,7 @@ async function attachCategoriesToProducts(products) {
   }
 }
 
+
 module.exports = {
   createProduct,
   getAllProducts,
@@ -298,4 +299,6 @@ module.exports = {
   getAllCategories,
   createInitialPhotos,
   getPhotosByProductId,
-};
+  assignCategory,
+  attachPhotoToProduct
+}
