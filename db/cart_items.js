@@ -87,4 +87,4 @@ async function attachItemsToCarts(carts) {
   }
 }
 
-module.exports = { attachItemsToCarts, createCartItem, deleteCartItem, editCartItemQuantity };
+module.exports = { attachItemsToCarts, assignItemToCart, removeItemFromCart, editCartItemQuantity };

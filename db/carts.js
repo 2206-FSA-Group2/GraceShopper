@@ -101,4 +101,5 @@ module.exports = {
   deleteActiveCart,
   getPurchasedCartsByUser,
   convertCartToPurchased,
+  getActiveCart
 };
