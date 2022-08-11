@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 
 //Encryption is commented out. Upon enabling, replace password to hashedpassword
 async function createUser({ email, password, firstName, lastName, isAdmin, isActive }){
-    // const SALT_COUNT = 20;
-    // const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+    const SALT_COUNT = 10;
+    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
 try {
     const{
         rows: [user],
@@ -12,9 +12,9 @@ try {
         `INSERT INTO users(email, password, first_name, last_name, is_admin, is_active)
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT (email) DO NOTHING
-        RETURNING *;
+        RETURNING id, email;
         `,
-        [email, password, firstName, lastName, isAdmin, isActive]
+        [email, hashedPassword, firstName, lastName, isAdmin, isActive]
     );
         return user
 } catch (error){
@@ -24,17 +24,26 @@ try {
 
 //function for login Require consensus on .env file
 async function getUser({email, password}){
-    try{
-        const user = await getUserByEmail(email);
-        const hashedPassword = user.password;
-        const passwordMatched = await bcrypt.compare(password, hashedPassword)
+    const user = await getUserByEmail(email);
+    const hashedPassword = user.password;
+    const passwordMatched = await bcrypt.compare(password, hashedPassword)
+    if (passwordMatched){
+        try{
+            const {
+                rows: [user],
+              } = await client.query(
+                `
+              SELECT id, email
+              FROM users
+              WHERE email=$1 AND password=$2;
+              `,
+                [email, hashedPassword]
+              );
         
-        if (passwordMatched){
-            delete user.password
-            return user
+              return user;
+        } catch (error){
+            throw error
         }
-    } catch (error){
-        throw error
     }
 }
 
