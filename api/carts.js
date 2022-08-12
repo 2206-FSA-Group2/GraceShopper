@@ -1,6 +1,6 @@
 const express = require("express");
-const { getActiveCart, getPurchasedCartsByUser, createCart } = require("../db/carts");
-const { requireUser } = require("./utils");
+const { getActiveCart, getPurchasedCartsByUser, createCart, getAllPurchasedCarts } = require("../db/carts");
+const { requireUser, requireAdmin } = require("./utils");
 const router = express.Router();
 
 // GET /api/carts/cart THIS GETS THE CURRENT CART
@@ -50,5 +50,12 @@ router.post("/newcart", requireUser, async (req, res, next) => {
 
 
 // What is the functionality of deleteActiveCart?
-
+router.get("/allcarts", requireAdmin, async(req,res,next)=>{
+try {
+  const allCarts = await getAllPurchasedCarts()
+  res.send(allCarts)
+} catch ({ name, message }) {
+  next({ name, message, status: 401 });
+}
+})
 module.exports = router;
