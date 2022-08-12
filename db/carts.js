@@ -70,7 +70,7 @@ async function deleteActiveCart({ id }) {
 async function getPurchasedCartsByUser({ id }) {
   try {
     const { rows: carts } = await client.query(
-      `SELECT * from CARTS
+      `SELECT * FROM carts
             WHERE carts.user_id = $1
             AND purchased = true;
             `,
@@ -86,7 +86,7 @@ async function getPurchasedCartsByUser({ id }) {
 async function getActiveCart({ id }) {
     try {
     const {rows: [cart]} = await client.query(
-        `SELECT * from CARTS
+        `SELECT * FROM carts
         WHERE carts.user_id = $1
         AND purchased = false;
         `,
@@ -96,10 +96,22 @@ async function getActiveCart({ id }) {
     } catch(error) { throw error }
 }
 
+async function getAllPurchasedCarts() {
+  try {
+  const {rows} = await client.query(
+      `SELECT * FROM carts
+      WHERE purchased = true;
+      `
+  )
+  return rows
+  } catch(error) { throw error }
+}
+
 module.exports = {
   createCart,
   deleteActiveCart,
   getPurchasedCartsByUser,
   convertCartToPurchased,
-  getActiveCart
+  getActiveCart,
+  getAllPurchasedCarts
 };
