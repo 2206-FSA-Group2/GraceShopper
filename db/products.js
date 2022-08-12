@@ -229,7 +229,7 @@ async function attachPhotosToProducts(products) {
   if (!productIds?.length) return [];
   try {
 
-    const { rows: products } = await client.query(
+    const { rows: photos } = await client.query(
       `
           SELECT product_photos.*
           FROM products 
@@ -242,8 +242,8 @@ async function attachPhotosToProducts(products) {
 
     for (const product of productsToReturn) {
 
-      const photosToAdd = products.filter(
-        (product) => product.product_id === product.id
+      const photosToAdd = photos.filter(
+        (photo) => photo.product_id === product.id
       );
 
       product.photos = photosToAdd;
