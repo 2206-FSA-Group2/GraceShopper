@@ -3,6 +3,7 @@ const fs= require('fs');
 const { parse } = require("csv-parse");
 
 
+
 const itemArr = [];
 const categoryArr = [];
 const photoArr = [];
@@ -17,44 +18,46 @@ const {
 } = require('./carts')
 
 const {
-  createProduct
+  createProduct,
+  createInitialCategories,
+  createInitialPhotos
 } = require('./products');
 
 //read the inventory seed file and create objects to be used by product table seeder function.
-fs.createReadStream("./product_seed.csv")
-  .pipe(parse({ delimeter: ',', from_line: 2 }))
-  //for each line of the file, store the data in the appropriate object
-  .on("data", function (row) {
-    categoryArr.push({"id": row[0]-0,
-                      "name": row[1], 
-                      "product_id": productId});
-    itemArr.push({"name":row[2],
-                  "description":row[3],
-                  "price":row[4]-0,
-                  "quantity_on_hand":row[5]-0})
-    if(row[6]!=='') {
-      photoArr.push({"product_id":productId,
-                     "url":row[6]})
-    }
-    if(row[7]!=='') {
-      photoArr.push({"product_id":productId,
-                     "url":row[7]})
-    }
-    if(row[8]!=='') {
-      photoArr.push({"product_id":productId,
-                     "url":row[8]})
-    }
-    productId++; //end of row -- increment for next product
-  })
-  .on("error", function (error) {
-    console.log(error.message)
-  })
-  .on("end",function () {
-//     console.log("finished reading inventory file")
-//     console.log("the items are:",itemArr)
-// console.log("the category entries are:",categoryArr)
-// console.log("the photo entries are:",photoArr);
-  })
+// fs.createReadStream("./product_seed.csv")
+//   .pipe(parse({ delimeter: ',', from_line: 2 }))
+//   //for each line of the file, store the data in the appropriate object
+//   .on("data", function (row) {
+//     categoryArr.push({"id": row[0]-0,
+//                       "name": row[1], 
+//                       "product_id": productId});
+//     itemArr.push({"name":row[2],
+//                   "description":row[3],
+//                   "price":row[4]-0,
+//                   "quantity_on_hand":row[5]-0})
+//     if(row[6]!=='') {
+//       photoArr.push({"product_id":productId,
+//                      "url":row[6]})
+//     }
+//     if(row[7]!=='') {
+//       photoArr.push({"product_id":productId,
+//                      "url":row[7]})
+//     }
+//     if(row[8]!=='') {
+//       photoArr.push({"product_id":productId,
+//                      "url":row[8]})
+//     }
+//     productId++; //end of row -- increment for next product
+//   })
+//   .on("error", function (error) {
+//     console.log(error.message)
+//   })
+//   .on("end",function () {
+// //     console.log("finished reading inventory file")
+// //     console.log("the items are:",itemArr)
+// // console.log("the category entries are:",categoryArr)
+// // console.log("the photo entries are:",photoArr);
+//   })
 
 
 async function dropTables(){
@@ -171,7 +174,7 @@ async function createInitialUsers() {
   console.log('Starting to create users...');
   try {
     const usersToCreate = [
-      { email: 'albert', password: 'bertie99', firstName: `Albert`, lastName: `Sanchez`, isAdmin: false, isActive: true },
+      { email: 'albert', password: 'bertie99', firstName: `Albert`, lastName: `Sanchez`, isAdmin: true, isActive: true },
       { email: 'sandra', password: 'sandra123', firstName: `Sandra`, lastName: `Hills`, isAdmin: false, isActive: true },
       { email: 'glamgal', password: 'glamgal123', firstName: `Glamgal`, lastName: `Dwarf`, isAdmin: false, isActive: true },
     ];
@@ -231,6 +234,8 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialProducts();
     await createInitialCarts();
+    await createInitialCategories();
+    await createInitialPhotos();
   } catch (error) {
     console.log('Error during rebuildDB');
     throw error;
