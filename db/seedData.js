@@ -18,46 +18,44 @@ const {
 } = require('./carts')
 
 const {
-  createProduct,
-  createInitialCategories,
-  createInitialPhotos
+  createProduct, assignCategory, attachPhotoToProduct
 } = require('./products');
 
 //read the inventory seed file and create objects to be used by product table seeder function.
-// fs.createReadStream("./product_seed.csv")
-//   .pipe(parse({ delimeter: ',', from_line: 2 }))
-//   //for each line of the file, store the data in the appropriate object
-//   .on("data", function (row) {
-//     categoryArr.push({"id": row[0]-0,
-//                       "name": row[1], 
-//                       "product_id": productId});
-//     itemArr.push({"name":row[2],
-//                   "description":row[3],
-//                   "price":row[4]-0,
-//                   "quantity_on_hand":row[5]-0})
-//     if(row[6]!=='') {
-//       photoArr.push({"product_id":productId,
-//                      "url":row[6]})
-//     }
-//     if(row[7]!=='') {
-//       photoArr.push({"product_id":productId,
-//                      "url":row[7]})
-//     }
-//     if(row[8]!=='') {
-//       photoArr.push({"product_id":productId,
-//                      "url":row[8]})
-//     }
-//     productId++; //end of row -- increment for next product
-//   })
-//   .on("error", function (error) {
-//     console.log(error.message)
-//   })
-//   .on("end",function () {
-// //     console.log("finished reading inventory file")
-// //     console.log("the items are:",itemArr)
-// // console.log("the category entries are:",categoryArr)
-// // console.log("the photo entries are:",photoArr);
-//   })
+fs.createReadStream("./db/product_seed.csv")
+  .pipe(parse({ delimeter: ',', from_line: 2 }))
+  //for each line of the file, store the data in the appropriate object
+  .on("data", function (row) {
+    categoryArr.push({"id": row[0]-0,
+                      "name": row[1], 
+                      "product_id": productId});
+    itemArr.push({"name":row[2],
+                  "description":row[3],
+                  "price":row[4]-0,
+                  "quantity_on_hand":row[5]-0})
+    if(row[6]!=='') {
+      photoArr.push({"product_id":productId,
+                     "url":row[6]})
+    }
+    if(row[7]!=='') {
+      photoArr.push({"product_id":productId,
+                     "url":row[7]})
+    }
+    if(row[8]!=='') {
+      photoArr.push({"product_id":productId,
+                     "url":row[8]})
+    }
+    productId++; //end of row -- increment for next product
+  })
+  .on("error", function (error) {
+    console.log(error.message)
+  })
+  .on("end",function () {
+//     console.log("finished reading inventory file")
+//     console.log("the items are:",itemArr)
+// console.log("the category entries are:",categoryArr)
+// console.log("the photo entries are:",photoArr);
+  })
 
 
 async function dropTables(){
@@ -192,18 +190,72 @@ async function createInitialUsers() {
 async function createInitialProducts() {
   console.log('Starting to create products...');
   try {
-    const productsToCreate = [
-      { name: 'PlayStation1', description: 'Everything works, brand new!', price: 150, quantity: 5, isActive: true },
-      { name: 'PlayStation2', description: 'Barely works', price: 25, quantity: 1, isActive: true  },
-      { name: 'Gameboy Color', description: 'Still sealed! Never opened', price: 100, quantity: 4, isActive: true  },
-    ];
-    const products = await Promise.all(productsToCreate.map(createProduct));
+    //create products from the contents of the inventory file that we read above:
+    const products = await Promise.all(itemArr.map(createProduct));
 
     console.log('Products created:');
     console.log(products);
     console.log('Finished creating products!');
   } catch (error) {
     console.error('Error creating products!');
+    throw error;
+  }
+}
+async function createInitialCategories() {
+  console.log("Starting to create categories...");
+  try {
+    //This is the original code from Rafael's function:
+    // const categoriesToCreate = [
+    //   { name: "Consoles", product_id: 1 },
+    //   { name: "Software", product_id: 1 },
+    //   { name: "Software", product_id: 2 },
+    //   { name: "Hardware", product_id: 3 },
+    // ];
+    const categories = await Promise.all(
+      categoryArr.map(assignCategory)
+    );
+
+    console.log("Categories created:");
+    console.log(categories);
+    console.log("Finished creating categories!");
+  } catch (error) {
+    console.error("Error creating categories!");
+    throw error;
+  }
+}
+
+async function createInitialPhotos() {
+  console.log("Starting to create photos...");
+  try {
+    const photosToCreate = [
+      {
+        product_id: 1,
+        url: "https://upload.wikimedia.org/wikipedia/commons/6/60/Disk_II.jpg",
+        priority: 1,
+      },
+      {
+        product_id: 1,
+        url: "http://oldcomputers.net/pics/ti994-monitor.jpg",
+        priority: 2,
+      },
+      {
+        product_id: 2,
+        url: "http://oldcomputers.net/pics/ti994-left.jpg",
+        priority: 1,
+      },
+      {
+        product_id: 3,
+        url: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Epson-hx-20.jpg",
+        priority: 1,
+      },
+    ];
+    const photos = await Promise.all(photoArr.map(attachPhotoToProduct));
+
+    console.log("Photos created:");
+    console.log(photos);
+    console.log("Finished creating photos!");
+  } catch (error) {
+    console.error("Error creating photos!");
     throw error;
   }
 }
