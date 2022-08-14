@@ -105,8 +105,8 @@ router.post("/addPhoto/:productId", requireAdmin, async (req, res, next) => {
   }
 });
 
-// GET /api/products/categories
-router.get("/categories", async (req, res, next) => {
+// GET /api/products/all/categories
+router.get("/all/categories", async (req, res, next) => {
   try {
     const categories = await getAllCategories();
     res.send(categories);
