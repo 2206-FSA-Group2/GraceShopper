@@ -83,6 +83,26 @@ async function updateProduct({ id, ...fields }) {
 async function destroyProduct(id) {
   try {
     const {
+      rows: [categories],
+    } = await client.query(
+      `
+        DELETE FROM categories
+        WHERE product_id=$1
+        RETURNING *;
+      `,
+      [id]
+    );
+    const {
+      rows: [photos],
+    } = await client.query(
+      `
+        DELETE FROM product_photos
+        WHERE product_id=$1
+        RETURNING *;
+      `,
+      [id]
+    );
+    const {
       rows: [product],
     } = await client.query(
       `
