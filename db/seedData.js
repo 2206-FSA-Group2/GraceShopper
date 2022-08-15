@@ -1,13 +1,12 @@
 const client = require("./client");
-const fs= require('fs');
+const fs = require("fs");
 const { parse } = require("csv-parse");
 
-
-
 const itemArr = [];
-const categoryArr = [];
-const photoArr = [];
-let productId=1;
+const categoryLinks = {};
+const photoLinks = {};
+let allProducts = [];
+
 
 const {
   createUser,
@@ -18,53 +17,64 @@ const {
   createCart
 } = require('./carts')
 
+
 const {
   createProduct,
-  createInitialCategories,
-  createInitialPhotos
-} = require('./products');
+  assignCategory,
+  attachPhotoToProduct,
+  getAllProducts,
+} = require("./products");
 
-//read the inventory seed file and create objects to be used by product table seeder function.
-// fs.createReadStream("./product_seed.csv")
-//   .pipe(parse({ delimeter: ',', from_line: 2 }))
-//   //for each line of the file, store the data in the appropriate object
-//   .on("data", function (row) {
-//     categoryArr.push({"id": row[0]-0,
-//                       "name": row[1], 
-//                       "product_id": productId});
-//     itemArr.push({"name":row[2],
-//                   "description":row[3],
-//                   "price":row[4]-0,
-//                   "quantity_on_hand":row[5]-0})
-//     if(row[6]!=='') {
-//       photoArr.push({"product_id":productId,
-//                      "url":row[6]})
-//     }
-//     if(row[7]!=='') {
-//       photoArr.push({"product_id":productId,
-//                      "url":row[7]})
-//     }
-//     if(row[8]!=='') {
-//       photoArr.push({"product_id":productId,
-//                      "url":row[8]})
-//     }
-//     productId++; //end of row -- increment for next product
-//   })
-//   .on("error", function (error) {
-//     console.log(error.message)
-//   })
-//   .on("end",function () {
-// //     console.log("finished reading inventory file")
-// //     console.log("the items are:",itemArr)
-// // console.log("the category entries are:",categoryArr)
-// // console.log("the photo entries are:",photoArr);
-//   })
+function readInventoryFile() {
+  //read the inventory seed file and create objects to be used by product table seeder function.
+  fs.createReadStream("./db/product_seed.csv")
+    .pipe(parse({ delimeter: ",", from_line: 2 }))
+    //for each line of the file, store the product data in the itemArr array; associate the category info and photo urls with the item name so that they can be appropriately linked in the db seeder function.  Note that row[2] is the item's name
+    .on("data", function (row) {
+      categoryLinks[row[2]] = {
+        number: row[0],
+        name: row[1],
+      };
+      itemArr.push({
+        name: row[2],
+        description: row[3],
+        price: row[4] - 0,
+        quantity: row[5],
+        isActive: true,
+      });
 
+      //the following statements check if a photo URL exists on the line.  If the url exists, it gets added to the lookup object under a key with the inventory item's name
+      if (row[6] !== "") {
+        photoLinks[row[2]] = [
+          {
+            url: row[6],
+            priority: 1,
+          },
+        ];
+      }
+      if (row[7] !== "") {
+        photoLinks[row[2]].push({
+          url: row[7],
+          priority: 2,
+        });
+      }
+      if (row[8] !== "") {
+        photoLinks[row[2]].push({
+          url: row[8],
+          priority: 3,
+        });
+      }
+    })
+    .on("error", function (error) {
+      console.log(error.message);
+    })
+    .on("end", function () {});
+}
 
-async function dropTables(){
-  console.log("Dropping all tables") 
+async function dropTables() {
+  console.log("Dropping all tables");
   await client.query(
-     `DROP TABLE IF EXISTS wishlist_items;
+    `DROP TABLE IF EXISTS wishlist_items;
      DROP TABLE IF EXISTS orders;
      DROP TABLE IF EXISTS order_status;
      DROP TABLE IF EXISTS addresses;
@@ -76,7 +86,7 @@ async function dropTables(){
      DROP TABLE IF EXISTS product_photos;
      DROP TABLE IF EXISTS products;
      `
-   )
+  );
 }
 async function createTables() {
   await dropTables();
@@ -172,20 +182,41 @@ async function createTables() {
 }
 
 async function createInitialUsers() {
-  console.log('Starting to create users...');
+  console.log("Starting to create users...");
   try {
     const usersToCreate = [
-      { email: 'albert', password: 'bertie99', firstName: `Albert`, lastName: `Sanchez`, isAdmin: true, isActive: true },
-      { email: 'sandra', password: 'sandra123', firstName: `Sandra`, lastName: `Hills`, isAdmin: false, isActive: true },
-      { email: 'glamgal', password: 'glamgal123', firstName: `Glamgal`, lastName: `Dwarf`, isAdmin: false, isActive: true },
+      {
+        email: "albert",
+        password: "bertie99",
+        firstName: `Albert`,
+        lastName: `Sanchez`,
+        isAdmin: true,
+        isActive: true,
+      },
+      {
+        email: "sandra",
+        password: "sandra123",
+        firstName: `Sandra`,
+        lastName: `Hills`,
+        isAdmin: false,
+        isActive: true,
+      },
+      {
+        email: "glamgal",
+        password: "glamgal123",
+        firstName: `Glamgal`,
+        lastName: `Dwarf`,
+        isAdmin: false,
+        isActive: true,
+      },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
 
-    console.log('Users created:');
+    console.log("Users created:");
     console.log(users);
-    console.log('Finished creating users!');
+    console.log("Finished creating users!");
   } catch (error) {
-    console.error('Error creating users!');
+    console.error("Error creating users!");
     throw error;
   }
 }
@@ -206,61 +237,113 @@ async function loginInitialUsers(){
 }
 
 async function createInitialProducts() {
-  console.log('Starting to create products...');
+  console.log("Starting to create products...");
   try {
-    const productsToCreate = [
-      { name: 'PlayStation1', description: 'Everything works, brand new!', price: 150, quantity: 5, isActive: true },
-      { name: 'PlayStation2', description: 'Barely works', price: 25, quantity: 1, isActive: true  },
-      { name: 'Gameboy Color', description: 'Still sealed! Never opened', price: 100, quantity: 4, isActive: true  },
-    ];
-    const products = await Promise.all(productsToCreate.map(createProduct));
+    //create products from the contents of the inventory file that we read above:
 
-    console.log('Products created:');
+    const products = await Promise.all(itemArr.map(createProduct));
+
+    console.log("Products created:");
     console.log(products);
-    console.log('Finished creating products!');
+    console.log("Finished creating products!");
   } catch (error) {
-    console.error('Error creating products!');
+    console.error("Error creating products!");
+    throw error;
+  } finally {
+    allProducts = await getAllProducts();
+    createInitialCategories();
+    createInitialPhotos();
+  }
+}
+async function createInitialCategories() {
+  console.log("Starting to create categories...");
+  try {
+    for (product of allProducts) {
+      await assignCategory({
+        name: categoryLinks[product.name].name,
+        product_id: product.id,
+      });
+    }
+  } catch (error) {
+    console.error("Error creating categories!");
+    throw error;
+  }
+}
+
+async function createInitialPhotos() {
+  console.log("Starting to create photos...");
+  try {
+    // const photosToCreate = [
+    //   {
+    //     product_id: 1,
+    //     url: "https://upload.wikimedia.org/wikipedia/commons/6/60/Disk_II.jpg",
+    //     priority: 1,
+    //   },
+    //   {
+    //     product_id: 1,
+    //     url: "http://oldcomputers.net/pics/ti994-monitor.jpg",
+    //     priority: 2,
+    //   },
+    //   {
+    //     product_id: 2,
+    //     url: "http://oldcomputers.net/pics/ti994-left.jpg",
+    //     priority: 1,
+    //   },
+    //   {
+    //     product_id: 3,
+    //     url: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Epson-hx-20.jpg",
+    //     priority: 1,
+    //   },
+    // ];
+    //photoLinks has the URLs of the photo in an array associated with each product--now that product IDs exist, associate the correct one with each URL so that we can build out the product_photos table
+    for (product of allProducts) {
+      photoLinks[product.name].map((p) => (p.product_id = product.id));
+    }
+    //now each photo item has the correct product_id set--call attachPhoto on each photo object
+    for (const item in photoLinks) {
+      photoLinks[item].map(attachPhotoToProduct);
+    }
+
+    console.log("Finished creating photos!");
+  } catch (error) {
+    console.error("Error creating photos!");
     throw error;
   }
 }
 async function createInitialCarts() {
-  console.log('Starting to create carts...');
+  console.log("Starting to create carts...");
   try {
     const user1 = await getUserById(1);
-    console.log("fetched user 1: ", user1)
+    console.log("fetched user 1: ", user1);
     const user2 = await getUserById(2);
     const user3 = await getUserById(3);
     const myUsers = [user1, user2, user3];
     const carts = await Promise.all(myUsers.map(createCart));
 
-    console.log('Carts created:');
+    console.log("Carts created:");
     console.log(carts);
-    console.log('Finished creating products!');
+    console.log("Finished creating carts!");
   } catch (error) {
-    console.error('Error creating products!');
+    console.error("Error creating carts!");
     throw error;
   }
 }
 
-
-
-
 async function rebuildDB() {
   try {
     await dropTables();
+    await readInventoryFile();
     await createTables();
     await createInitialUsers();
     await loginInitialUsers();
     await createInitialProducts();
     await createInitialCarts();
-    await createInitialCategories();
-    await createInitialPhotos();
   } catch (error) {
-    console.log('Error during rebuildDB');
+    console.log("Error during rebuildDB");
     throw error;
   }
 }
 
 module.exports = {
-  rebuildDB
-}
+  rebuildDB,
+};
