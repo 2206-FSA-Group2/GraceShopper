@@ -82,7 +82,6 @@ async function getUserById(userId){
     }
 }
 
-
 //All in one update for "Update Profile" Possible update password only function??
 async function updateUser({id, ...fields}){
     const setString = Object.keys(fields)
