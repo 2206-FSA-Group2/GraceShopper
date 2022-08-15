@@ -7,8 +7,16 @@ const categoryLinks = {};
 const photoLinks = {};
 let allProducts = [];
 
-const { createUser, getUserById } = require("./users");
-const { createCart } = require("./carts");
+
+const {
+  createUser,
+  getUser,
+  getUserById
+} = require('./users');
+const {
+  createCart
+} = require('./carts')
+
 
 const {
   createProduct,
@@ -213,6 +221,21 @@ async function createInitialUsers() {
   }
 }
 
+async function loginInitialUsers(){
+  console.log('Logging in initial users...');
+  try {
+    const email = "albert"
+    const password = "bertie99"
+    const users = await getUser({email, password});
+    console.log('Users Logged in');
+    console.log(users);
+    console.log('Finished Logging users!');
+  } catch (error) {
+    console.error('Error logging users!');
+    throw error;
+  }
+}
+
 async function createInitialProducts() {
   console.log("Starting to create products...");
   try {
@@ -312,6 +335,7 @@ async function rebuildDB() {
     await readInventoryFile();
     await createTables();
     await createInitialUsers();
+    await loginInitialUsers();
     await createInitialProducts();
     await createInitialCarts();
   } catch (error) {

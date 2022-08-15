@@ -12,7 +12,7 @@ try {
         `INSERT INTO users(email, password, first_name, last_name, is_admin, is_active)
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT (email) DO NOTHING
-        RETURNING id, email;
+        RETURNING id, email, password;
         `,
         [email, hashedPassword, firstName, lastName, isAdmin, isActive]
     );
@@ -55,7 +55,7 @@ async function getUserByEmail(email){
             `SELECT *
             FROM users
             WHERE email=$1;
-            `
+            `,
             [email]
         );
             return user
