@@ -51,7 +51,7 @@ router.patch("/:productId", requireAdmin, async (req, res, next) => {
   const { name, description, price, quantity, isActive } = req.body;
 
   try {
-    const updatedProduct = await updateProduct({id, name, description, price, quantity, isActive });
+    const updatedProduct = await updateProduct({id:id ,name:name, description:description, price:price, quantity:quantity, isActive:isActive });
 
     res.send(updatedProduct);
 
