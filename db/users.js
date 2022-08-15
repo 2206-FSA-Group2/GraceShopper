@@ -70,7 +70,7 @@ async function getUserById(userId){
             rows: [user],
         } = await client.query(
             `
-            SELECT id, email
+            SELECT id, email, is_admin as "isAdmin"
             FROM users
             WHERE id=$1;
             `,
