@@ -55,7 +55,7 @@ async function getUserByEmail(email){
             `SELECT *
             FROM users
             WHERE email=$1;
-            `
+            `,
             [email]
         );
             return user

@@ -193,9 +193,9 @@ async function createInitialUsers() {
 async function loginInitialUsers(){
   console.log('Logging in initial users...');
   try {
-    const userToLogin =
-      {email: 'albert', password: '$2b$10$Gl.gbhOxfWq98TLHatx5euO3gLWAf3CEft3KLxQi9xFp4bWepxIP.'};
-    const users = await getUser(userToLogin);
+    const email = "albert"
+    const password = "bertie99"
+    const users = await getUser({email, password});
     console.log('Users Logged in');
     console.log(users);
     console.log('Finished Logging users!');
