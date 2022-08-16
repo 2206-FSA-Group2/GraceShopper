@@ -173,9 +173,8 @@ async function getAllUsers(){
         const {
             rows:[users],
         } = await client.query(
-            `SELECT *
+            `SELECT id, email, first_name, last_name, is_admin as "isAdmin", is_active as "isActive"
             FROM users
-            RETURNING (email, first_name, last_name, is_active, is_admin);
             `
         );
         return users
