@@ -171,13 +171,13 @@ async function reactivateUser(id){
 async function getAllUsers(){
     try{
         const {
-            rows:[users],
+            rows
         } = await client.query(
             `SELECT id, email, first_name, last_name, is_admin as "isAdmin", is_active as "isActive"
             FROM users
             `
         );
-        return users
+        return rows
     } catch (error){
         throw error
     }
