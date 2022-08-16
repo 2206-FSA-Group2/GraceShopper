@@ -14,9 +14,11 @@ const {
   getUserById
 } = require('./users');
 const {
-  createCart
+  createCart, getActiveCart
 } = require('./carts')
-
+const {
+  assignItemToCart
+} = require('./cart_items')
 
 const {
   createProduct,
@@ -329,6 +331,16 @@ async function createInitialCarts() {
   }
 }
 
+async function assignInitialCartItems() {
+  console.log("starting to assign items")
+  const item = await assignItemToCart(1, 7, 1, 15.99)
+  const item2 = await assignItemToCart(1, 11, 1, 1.99)
+  const item3 = await assignItemToCart(1, 3, 1, 155.99)
+  const cart=await getActiveCart({id:1})
+  console.log(777, cart)
+
+}
+
 async function rebuildDB() {
   try {
     await dropTables();
@@ -338,6 +350,8 @@ async function rebuildDB() {
     await loginInitialUsers();
     await createInitialProducts();
     await createInitialCarts();
+    const result = await assignInitialCartItems();
+    console.log(result)
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;

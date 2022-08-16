@@ -9,7 +9,6 @@ async function assignItemToCart(cartId, productId, quantity, price) {
       `
         INSERT into cart_items(cart_id,product_id,quantity,price)
         VALUES($1, $2, $3, $4)
-        ON CONFLICT (product_id) DO NOTHING
         RETURNING *;
         `,
       [cartId, productId, quantity, price]
@@ -57,7 +56,6 @@ async function attachItemsToCarts(carts) {
   const binds = carts.map((_, index) => `$${index + 1}`).join(", ");
   const cartIds = carts.map((cart) => cart.id);
   if (!cartIds?.length) return [];
-
   try {
     const { rows: products } = await client.query(
       `
@@ -65,7 +63,7 @@ async function attachItemsToCarts(carts) {
                    products.name, 
                    products.description, 
                    cart_items.quantity, 
-                   cart_items.price 
+                   cart_items.price, 
                    cart_items.id AS "cartItemId", 
                    cart_items.cart_id
             FROM products JOIN cart_items 
@@ -74,7 +72,6 @@ async function attachItemsToCarts(carts) {
         `,
       cartIds
     );
-
     for (const cart of cartsToReturn) {
       const productsToAdd = products.filter(
         (product) => product.cart_id === cart.id
