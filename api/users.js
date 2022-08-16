@@ -109,7 +109,7 @@ router.get("/me", requireUser, async (req, res, next) => {
 
 // PATCH /api/users/deactivation
 router.patch("/deactivation", requireAdmin, async (req, res, next) => {
-  const id = req.user.id;
+  const { id } = req.body;
   try {
     res.send(await deactivateUser(id));
   } catch ({ name, message }) {

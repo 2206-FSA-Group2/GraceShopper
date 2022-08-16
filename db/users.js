@@ -135,7 +135,7 @@ async function deactivateUser(id){
             UPDATE users
             SET is_active = false
             WHERE id=$1
-            RETURNING *;
+            RETURNING id, email, is_active as "isActive";
             `,
             [id]
         );
