@@ -92,7 +92,7 @@ async function getActiveCart({ id }) {
         `,
         [id]
     )
-    return cart
+    return attachItemsToCarts([cart])[0];
     } catch(error) { throw error }
 }
 
