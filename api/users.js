@@ -10,6 +10,7 @@ const {
   deactivateUser,
   reactivateUser,
   updateUser,
+  getAllUsers,
 } = require("../db/users");
 
 // POST /api/users/register
@@ -145,6 +146,16 @@ router.patch("/me/:userId", requireUser, async (req, res, next) => {
   try {
     const updatedUser = await updateUser(id, email, firstName, lastName);
     res.send(updatedUser);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+// GET /api/users/all
+router.get("/all",requireAdmin, async (req, res, next) => {
+  try {
+    const users = await getAllUsers();
+    res.send(users);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
   }
