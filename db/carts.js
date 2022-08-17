@@ -81,7 +81,18 @@ async function getPurchasedCartsByUser({ id }) {
     throw error;
   }
 }
+async function getActiveCartId(userId) {
+  try {
+    let {rows: [cartId]} = await client.query(`
+    SELECT id FROM carts
+    WHERE carts.user_id = $1
+    AND purchased = false;`,[userId])
 
+    return cartId
+
+
+  }catch(error){throw error}
+}
 //gets active cart --takes user object and returns cart object
 async function getActiveCart({ id }) {
     try {
@@ -93,6 +104,7 @@ async function getActiveCart({ id }) {
         `,
         [id]
     )
+
     if (cart) return attachItemsToCarts([cart]);
     const newCart = createCart({id});
     return attachItemsToCarts([newCart])
@@ -116,5 +128,6 @@ module.exports = {
   getPurchasedCartsByUser,
   convertCartToPurchased,
   getActiveCart,
-  getAllPurchasedCarts
+  getAllPurchasedCarts,
+  getActiveCartId
 };
