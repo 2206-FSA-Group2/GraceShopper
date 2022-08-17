@@ -18,8 +18,8 @@ router.post("/newcartitem", requireUser, async (req, res, next) => {
   const { productId, quantity, price } = req.body;
   try {
     console.log("XXYY getting active cart")
-    const cartId = await getActiveCartId(userId);
-
+    const returnedId = await getActiveCartId(userId);
+    const cartId = returnedId.id
     console.log("cartId is ", cartId)
     console.log(`calling assignItemToCart(${cartId}, ${productId}, ${quantity}, ${price})`)
 
