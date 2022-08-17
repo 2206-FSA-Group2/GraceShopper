@@ -202,7 +202,7 @@ async function createInitialPhotos() {
       },
       {
         product_id: 1,
-        url: "http://oldcomputers.net/pics/ti994-monitor.jpg",
+        url: "http://oldcomputers.gnet/pics/ti994-monitor.jpg",
         priority: 2,
       },
       {

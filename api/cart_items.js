@@ -7,7 +7,7 @@ const {
 const router = express.Router();
 
 //POST /api/cart_items/newcartitem THIS ADDS ITEMS TO CART
-router.post("/newcartitem", async (req, res, next) => {
+router.post("/newcartitem", requireUser, async (req, res, next) => {
   const userId = req.user.id;
   const { productId, quantity, price } = req.body;
   try {
@@ -22,6 +22,7 @@ router.post("/newcartitem", async (req, res, next) => {
     );
     res.send(addedCartItem);
   } catch ({ name, message }) {
+    message = message + "cartId: " + cartId + "productId: " + productId + "quantity" + quantity + "price" + price
     next({ name, message, status: 401 });
   }
 });
