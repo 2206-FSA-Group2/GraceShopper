@@ -5,6 +5,7 @@ const {
   editCartItemQuantity,
 } = require("../db");
 const router = express.Router();
+const { requireUser, requireAdmin } = require("./utils");
 
 //POST /api/cart_items/newcartitem THIS ADDS ITEMS TO CART
 router.post("/newcartitem", requireUser, async (req, res, next) => {
