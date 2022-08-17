@@ -1,5 +1,5 @@
 const client = require("./client");
-const { attachPhotosToProducts } = require("./products");
+const { getPhotosByProductId } = require("./products");
 
 //creates cart item with specified numeric inputs and returns a cartItem object
 async function assignItemToCart(cartId, productId, quantity, price) {
