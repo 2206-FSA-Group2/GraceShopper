@@ -1,4 +1,5 @@
 const client = require("./client");
+const { attachPhotosToProducts } = require("./products");
 
 //creates cart item with specified numeric inputs and returns a cartItem object
 async function assignItemToCart(cartId, productId, quantity, price) {
@@ -76,7 +77,8 @@ async function attachItemsToCarts(carts) {
       const productsToAdd = products.filter(
         (product) => product.cart_id === cart.id
       );
-      cart.items = productsToAdd;
+
+      cart.items = productsToAdd
     }
     return cartsToReturn;
   } catch (error) {
