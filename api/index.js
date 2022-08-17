@@ -50,6 +50,10 @@ router.use("/users", usersRouter);
 const productsRouter = require("./products");
 router.use("/products", productsRouter);
 
+// ROUTER: /api/reviews
+const reviewsRouter = require("./reviews");
+router.use("/reviews", reviewsRouter);
+
 // ROUTER: /api/orders
 // const ordersRouter = require("./orders");
 // router.use("/orders", orders);
