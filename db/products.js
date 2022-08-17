@@ -29,10 +29,10 @@ async function getAllProducts() {
         `
     );
     const productsWithPhotos = await attachPhotosToProducts(rows)
-
     const finalProducts = await attachCategoriesToProducts(productsWithPhotos)
+    const productsReviewed = await attachReviewsToProducts(finalProducts)
  
-    return finalProducts
+    return productsReviewed
   } catch (error) {
     console.error(error);
   }
@@ -82,6 +82,16 @@ async function updateProduct({ id, ...fields }) {
 
 async function destroyProduct(id) {
   try {
+    const {
+      rows: [reviews],
+    } = await client.query(
+      `
+        DELETE FROM reviews
+        WHERE product_id=$1
+        RETURNING *;
+      `,
+      [id]
+    );
     const {
       rows: [categories],
     } = await client.query(
@@ -301,6 +311,39 @@ async function attachCategoriesToProducts(products) {
       );
 
       product.categories = categoriesToAdd;
+    }
+    return productsToReturn;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function attachReviewsToProducts(products) {
+
+  const productsToReturn = [...products];
+  const binds = products.map((_, index) => `$${index + 1}`).join(", ");
+  const productIds = products.map((product) => product.id);
+  if (!productIds?.length) return [];
+  try {
+
+    const { rows: reviews } = await client.query(
+      `
+          SELECT reviews.*
+          FROM products 
+          JOIN reviews ON reviews.product_id = products.id
+          WHERE reviews.product_id IN (${binds});
+        `,
+      productIds
+    );
+
+
+    for (const product of productsToReturn) {
+
+      const reviewsToAdd = reviews.filter(
+        (review) => review.product_id === product.id
+      );
+
+      product.reviews = reviewsToAdd;
     }
     return productsToReturn;
   } catch (error) {
