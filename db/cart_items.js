@@ -77,6 +77,9 @@ async function attachItemsToCarts(carts) {
       const productsToAdd = products.filter(
         (product) => product.cart_id === cart.id
       );
+      for (const product of productsToAdd) {
+        product.images = await getPhotosByProductId(product.id)
+      }
 
       cart.items = productsToAdd
     }

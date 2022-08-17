@@ -320,5 +320,6 @@ module.exports = {
   createInitialPhotos,
   getPhotosByProductId,
   assignCategory,
-  attachPhotoToProduct
+  attachPhotoToProduct,
+  attachPhotosToProducts
 }
