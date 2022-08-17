@@ -3,7 +3,10 @@ const {
   assignItemToCart,
   removeItemFromCart,
   editCartItemQuantity,
+  getActiveCart
 } = require("../db");
+
+const { requireUser } = require('./utils')
 const router = express.Router();
 const { requireUser, requireAdmin } = require("./utils");
 
