@@ -30,7 +30,7 @@ const { createInitialReviews } = require("./reviews");
 
 function readInventoryFile() {
   //read the inventory seed file and create objects to be used by product table seeder function.
-  fs.createReadStream("./product_seed.csv")
+  fs.createReadStream("./db/product_seed.csv")
     .pipe(parse({ delimeter: ",", from_line: 2 }))
     //for each line of the file, store the product data in the itemArr array; associate the category info and photo urls with the item name so that they can be appropriately linked in the db seeder function.  Note that row[2] is the item's name
     .on("data", function (row) {
@@ -354,6 +354,7 @@ async function rebuildDB() {
     await createInitialCarts();
     await assignInitialCartItems();
     await createInitialReviews()
+    console.log(await getAllProducts())
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
