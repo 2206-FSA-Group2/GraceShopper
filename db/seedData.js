@@ -29,6 +29,7 @@ const {
 
 const { createAddress } = require("./address");
 const { createInitialReviews } = require("./reviews");
+const { createOrder } = require("./orders");
 
 
 function readInventoryFile() {
@@ -398,6 +399,8 @@ async function rebuildDB() {
     await createInitialReviews()
     const cartId = await getActiveCart({id:1})
     const cartPurchased = await convertCartToPurchased({id:cartId[0].id})
+    const cartPurchasedId = cartPurchased.id
+    await createOrder({ cart_id: cartPurchasedId, address_id: 1, status: "Delivered" })
     await getActiveCart({id:1})
   } catch (error) {
     console.log("Error during rebuildDB");
