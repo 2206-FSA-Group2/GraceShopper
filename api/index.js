@@ -55,8 +55,8 @@ const reviewsRouter = require("./reviews");
 router.use("/reviews", reviewsRouter);
 
 // ROUTER: /api/orders
-// const ordersRouter = require("./orders");
-// router.use("/orders", orders);
+const ordersRouter = require("./orders");
+router.use("/orders", ordersRouter);
 
 // ROUTER: /api/carts
 const cartsRouter = require("./carts");

@@ -76,11 +76,48 @@ async function getPurchasedCartsByUser({ id }) {
             `,
       [id]
     );
-    return attachItemsToCarts(carts);
+    const cartsWithItems = await attachItemsToCarts(carts)
+    const CartsWithOrders = await attachOrdertoCart(cartsWithItems)
+    return CartsWithOrders;
   } catch (error) {
     throw error;
   }
 }
+
+async function attachOrdertoCart(carts) {
+
+  const cartsToReturn = [...carts];
+  const binds = carts.map((_, index) => `$${index + 1}`).join(", ");
+  const cartsIds = carts.map((cart) => cart.id);
+  if (!cartsIds?.length) return [];
+  try {
+
+    const { rows: orders } = await client.query(
+      `
+          SELECT orders.*
+          FROM carts 
+          JOIN orders ON orders.cart_id = carts.id
+          WHERE orders.cart_id IN (${binds});
+        `,
+      cartsIds
+    );
+
+
+    for (const cart of cartsToReturn) {
+
+      const ordersToAdd = orders.filter(
+        (order) => order.cart_id === cart.id
+      );
+
+      cart.order = ordersToAdd;
+    }
+    return cartsToReturn;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
 async function getActiveCartId(userId) {
   try {
     let {rows: [cartId]} = await client.query(`
