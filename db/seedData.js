@@ -396,7 +396,7 @@ async function rebuildDB() {
     await createInitialCarts();
     await assignInitialCartItems();
     await createInitialReviews()
-    console.log(await getAllProducts())
+
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;

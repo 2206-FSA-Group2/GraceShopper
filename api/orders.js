@@ -4,7 +4,7 @@ const router = express.Router();
 const { requireUser, requireAdmin } = require("./utils");
 
 // GET /api/orders
-router.get("/", async (req, res, next) => {
+router.get("/", requireAdmin, async (req, res, next) => {
   try {
     const orders = await getAllOrders();
     res.send(orders);
@@ -14,7 +14,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // GET /api/orders/:orderId
-router.get("/:orderId", async (req, res, next) => {
+router.get("/:orderId", requireAdmin, async (req, res, next) => {
     const id = Number(req.params.orderId);
 
     try {
