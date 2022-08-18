@@ -44,8 +44,9 @@ router.get("/newguestcart", async (req,res,next) => {
     cartItems = JSON.parse(data)
     const cart = await createCart({id: 0})
     if (cartItems.length) cartItems.map((item)=> {
-      assignItemToCart(cart.id,item.id,item.quantity,item.price)
+       assignItemToCart(cart.id,item.id,item.quantity,item.price)
    })
+   //
     fullCart = await attachItemsToCarts([cart])
    res.send(fullCart)
  }catch(error){throw(error)}
