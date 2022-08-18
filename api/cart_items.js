@@ -37,7 +37,7 @@ router.post("/newcartitem", requireUser, async (req, res, next) => {
 });
 
 //DELETE /api/cart_items/newcartitem THIS REMOVES ITEM FROM CART
-router.delete("/newcartitem", async (req, res, next) => {
+router.delete("/newcartitem", requireUser, async (req, res, next) => {
   const { id } = req.body;
   try {
     const deletedItem = await removeItemFromCart({ id });
