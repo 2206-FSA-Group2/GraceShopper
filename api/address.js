@@ -52,9 +52,9 @@ router.patch("/:addressId/updateaddress", requireUser, async (req, res, next) =>
   }
 });
 
-// Get /api/address/getaddress
-router.get("/getaddress", requireUser, async (req, res, next) => {
-  const { userId } = req.body;
+// Get /api/address/:userId
+router.get("/:userId", requireUser, async (req, res, next) => {
+  const { userId } = req.params.userId;
   try {
     const address = await getAddressByUserId(userId);
     res.send(address);
