@@ -57,16 +57,17 @@ async function updateAddress({ id, ...fields }) {
     }
 }
 
-async function deleteAddress(userId){
+async function deleteAddress(id, userId){
     try{
         const{
             rows: [address],
         } = await client.query (
             `DELETE FROM addresses
-            WHERE user_id = $1
+            WHERE id=$1 
+            AND user_id = $2
             RETURNING *;
             `,
-            [userId]
+            [id, userId]
         );
         return address;
     } catch (error){
