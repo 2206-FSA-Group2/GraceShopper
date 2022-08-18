@@ -5,7 +5,7 @@ async function createAddress({userId, label, street1, street2, city, state, zipc
         const{
             rows: [address],
         } = await client.query (
-            `INSERT into addresses (user_id, label, street1, street 2, city, state, zip)
+            `INSERT into addresses (user_id, label, street1, street2, city, state, zip)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *;
             `,
@@ -23,7 +23,7 @@ async function getAddressByUserId(userId){
             rows: [address],
         } = await client.query (
             `SELECT *
-            FROM address
+            FROM addresses
             WHERE user_id = $1;
             `,
             [userId]
@@ -44,7 +44,7 @@ async function updateAddress({ id, ...fields }) {
         rows: [address],
       } = await client.query(
         `
-          UPDATE products
+          UPDATE addresses
           SET ${setString}
           WHERE id=${id}
           RETURNING *;
@@ -62,7 +62,7 @@ async function deleteAddress(userId){
         const{
             rows: [address],
         } = await client.query (
-            `DELETE FROM address
+            `DELETE FROM addresses
             WHERE user_id = $1
             RETURNING *;
             `,
