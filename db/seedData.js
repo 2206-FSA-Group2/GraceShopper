@@ -401,7 +401,6 @@ async function rebuildDB() {
     const cartPurchased = await convertCartToPurchased({id:cartId[0].id})
     const cartPurchasedId = cartPurchased.id
     await createOrder({ cart_id: cartPurchasedId, address_id: 1, status: "Delivered" })
-    await getActiveCart({id:1})
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
