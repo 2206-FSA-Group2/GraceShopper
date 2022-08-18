@@ -26,7 +26,10 @@ const {
   attachPhotoToProduct,
   getAllProducts,
 } = require("./products");
+
+const { createAddress } = require("./address");
 const { createInitialReviews } = require("./reviews");
+
 
 function readInventoryFile() {
   //read the inventory seed file and create objects to be used by product table seeder function.
@@ -240,6 +243,49 @@ async function loginInitialUsers(){
   }
 }
 
+async function createInitialAddress(){
+  console.log('Creating initial address...');
+  try{
+    const addressToCreate = [
+      {
+        userId: 1,
+        label: 'This is my primary residence',
+        street1: '428 Albert Street',
+        street2: '812 Yellow Lane',
+        city: 'New York City',
+        state: 'NY',
+        zipcode: 98876,
+      },
+      {
+        userId: 2,
+        label: 'This is my work residence',
+        street1: '428 Sandra Street',
+        street2: '218 Green Lane',
+        city: 'San Diego',
+        state: 'CA',
+        zipcode: 98876,
+      },
+      {
+        userId: 3,
+        label: 'This is my secondary residence',
+        street1: '428 Gandalf Street',
+        street2: '128 Blue Lane',
+        city: 'Houston',
+        state: 'TX',
+        zipcode: 98876,
+      }
+    ];
+    const address = await Promise.all(addressToCreate.map(createAddress));
+
+    console.log(address);
+    console.log('Finished creating address..');
+
+  } catch (error){
+    console.error('Error creating address');
+    throw error;
+  }
+}
+
 async function createInitialProducts() {
   console.log("Starting to create products...");
   try {
@@ -349,6 +395,7 @@ async function rebuildDB() {
     await readInventoryFile();
     await createTables();
     await createInitialUsers();
+    await createInitialAddress();
     await loginInitialUsers();
     await createInitialProducts();
     await createInitialCarts();
