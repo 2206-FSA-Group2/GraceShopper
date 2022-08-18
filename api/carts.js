@@ -40,14 +40,14 @@ router.patch("/cart", requireUser, async (req, res, next) => {
 // GET /api/carts/newguestcart
 router.get("/newguestcart", async (req,res,next) => {
   try{
-  const data = req.body.cartItems
-  cartItems = JSON.parse(data)
-  const cart = await createCart({id: 0})
-  if (cartItems.length) cartItems.map((item)=> {
-    await assignItemToCart(cart.id,item.id,item.quantity,item.price)
-  })
-  fullCart = await attachItemsToCarts([cart])
-  res.send(fullCart)
+    const data = req.body.cartItems
+    cartItems = JSON.parse(data)
+    const cart = await createCart({id: 0})
+    if (cartItems.length) cartItems.map((item)=> {
+      assignItemToCart(cart.id,item.id,item.quantity,item.price)
+   })
+    fullCart = await attachItemsToCarts([cart])
+   res.send(fullCart)
  }catch(error){throw(error)}
 })
 // POST /api/carts/newcart THIS CREATES A NEW CART
