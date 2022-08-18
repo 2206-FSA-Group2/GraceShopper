@@ -396,8 +396,8 @@ async function rebuildDB() {
     await createInitialCarts();
     await assignInitialCartItems();
     await createInitialReviews()
-    await getActiveCart({id:1})
-    await convertCartToPurchased({id:cartId[0].id})
+    const cartId = await getActiveCart({id:1})
+    const cartPurchased = await convertCartToPurchased({id:cartId[0].id})
     await getActiveCart({id:1})
   } catch (error) {
     console.log("Error during rebuildDB");
