@@ -75,6 +75,24 @@ async function deleteAddress(id, userId){
     }
 }
 
+async function attachAddressToOrder({userId, label, street1, street2, city, state, zipcode}){
+    try{
+        const{
+            rows: [address],
+        } = await client.query (
+            `SELECT orders.*, label, street1, street2, city, state, zip
+            FROM addresses
+            JOIN addresses ON 
+            RETURNING *;
+            `,
+            [id]
+        );
+        return address;
+    } catch (error){
+        console.error(error)
+    }
+}
+
 
 module.exports = {
     createAddress,
