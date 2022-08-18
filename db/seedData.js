@@ -26,7 +26,10 @@ const {
   attachPhotoToProduct,
   getAllProducts,
 } = require("./products");
+
 const { createAddress } = require("./address");
+const { createInitialReviews } = require("./reviews");
+
 
 function readInventoryFile() {
   //read the inventory seed file and create objects to be used by product table seeder function.
@@ -132,7 +135,8 @@ async function createTables() {
         product_id INTEGER REFERENCES products(id),
         rating INTEGER NOT NULL,
         title VARCHAR(255),
-        description VARCHAR(255)
+        description VARCHAR(255),
+        UNIQUE (user_id, product_id)
       );
 
       CREATE TABLE carts(
@@ -395,8 +399,9 @@ async function rebuildDB() {
     await loginInitialUsers();
     await createInitialProducts();
     await createInitialCarts();
-    const result = await assignInitialCartItems();
-    console.log(result)
+    await assignInitialCartItems();
+    await createInitialReviews()
+    console.log(await getAllProducts())
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
