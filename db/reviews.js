@@ -35,13 +35,13 @@ async function getAllReviews() {
 async function getReviewsByProductId(id) {
     try {
       const {
-        rows: [product],
+        rows
       } = await client.query(`
           SELECT *   
           FROM reviews
           WHERE product_id=$1;
           `, [id]);
-      return product;
+      return rows;
     } catch (error) {
       console.error(error);
     }
@@ -50,13 +50,13 @@ async function getReviewsByProductId(id) {
 async function getReviewsByUserId(id) {
     try {
       const {
-        rows: [product],
+        rows
       } = await client.query(`
           SELECT *   
           FROM reviews
           WHERE user_id=$1;
           `, [id]);
-      return product;
+      return rows;
     } catch (error) {
       console.error(error);
     }

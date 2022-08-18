@@ -164,16 +164,11 @@ async function createTables() {
         zip INTEGER NOT NULL 
       );
 
-      CREATE TABLE order_status(
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255)
-      );
-
       CREATE TABLE orders(
         id SERIAL PRIMARY KEY,
         cart_id INTEGER REFERENCES carts(id),
         address_id INTEGER REFERENCES addresses(id),
-        status INTEGER REFERENCES order_status(id)
+        status VARCHAR(255) NOT NULL
       );
 
       CREATE TABLE wishlist_items(
