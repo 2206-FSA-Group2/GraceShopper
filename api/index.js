@@ -46,6 +46,10 @@ router.get("/health", async (req, res, next) => {
 const usersRouter = require("./users");
 router.use("/users", usersRouter);
 
+// ROUTER : /api/address
+const addressRouter = require('./address');
+router.use("/address", addressRouter);
+
 // ROUTER: /api/products
 const productsRouter = require("./products");
 router.use("/products", productsRouter);
