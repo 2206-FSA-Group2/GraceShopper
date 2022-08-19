@@ -152,9 +152,19 @@ router.patch("/me/:userId", requireUser, async (req, res, next) => {
 });
 
 // GET /api/users/all
-router.get("/all",requireAdmin, async (req, res, next) => {
+router.get("/all", requireAdmin, async (req, res, next) => {
   try {
     const users = await getAllUsers();
+    res.send(users);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
+router.get("/:userId/profile", requireUser, async (req, res, next) => {
+  const id = req.params.userId
+  try {
+    const users = await getUserInfo(id);
     res.send(users);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });

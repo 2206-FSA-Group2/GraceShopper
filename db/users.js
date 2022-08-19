@@ -64,6 +64,24 @@ async function getUserByEmail(email){
     }
 }
 
+async function getUserInfo(id){
+    try {
+        const {
+            rows: [user],
+        } = await client.query(
+            `
+            SELECT id, email, is_admin as "isAdmin", first_name as "firstName", last_name as "lastName"
+            FROM users
+            WHERE id=$1;
+            `,
+            [id]
+        );
+        return user;
+    } catch (error){
+        throw error;
+    }
+}
+
 async function getUserById(userId){
     try {
         const {
@@ -195,5 +213,6 @@ module.exports = {
     updatePassword,
     deactivateUser,
     reactivateUser,
-    getAllUsers
+    getAllUsers,
+    getUserInfo
 }
