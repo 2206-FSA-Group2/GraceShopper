@@ -173,6 +173,18 @@ router.get("/:userId/profile", requireUser, async (req, res, next) => {
   }
 });
 
+// GET /api/users/promote/:userId FOR PROFILE
+router.patch("/promote/:userId", requireAdmin, async (req, res, next) => {
+  const id = req.params.userId;
+  const is_admin = true
+  try {
+    const updatedUser = await updateUser({id, is_admin});
+    res.send(updatedUser);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
+
 // LEAVE UPDATING PASSWORD FOR LATER
 // router.patch("/me/:userId", requireUser, async (req, res, next) => {
 //   const { password } = req.body;
