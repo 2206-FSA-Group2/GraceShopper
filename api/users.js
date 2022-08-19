@@ -161,9 +161,10 @@ router.get("/all", requireAdmin, async (req, res, next) => {
   }
 });
 
-router.get("/profile", requireUser, async (req, res, next) => {
+router.get("/:userId/profile", requireUser, async (req, res, next) => {
+  const id = req.params.userId
   try {
-    const users = await getUserInfo(userId);
+    const users = await getUserInfo(id);
     res.send(users);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });

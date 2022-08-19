@@ -64,7 +64,7 @@ async function getUserByEmail(email){
     }
 }
 
-async function getUserInfo(userId){
+async function getUserInfo(id){
     try {
         const {
             rows: [user],
@@ -74,7 +74,7 @@ async function getUserInfo(userId){
             FROM users
             WHERE id=$1;
             `,
-            [userId]
+            [id]
         );
         return user;
     } catch (error){
