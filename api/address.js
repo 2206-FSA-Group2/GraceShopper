@@ -29,7 +29,7 @@ router.post("/createaddress", requireUser, async (req, res, next) => {
   }
 });
 
-// Patch /api/address/updateaddress
+// Patch /api/address/:addressId/updateaddress
 router.patch("/:addressId/updateaddress", requireUser, async (req, res, next) => {
     const id = req.params.addressId
   const { userId, label, street1, street2, city, state, zipcode } = req.body;
@@ -54,7 +54,7 @@ router.patch("/:addressId/updateaddress", requireUser, async (req, res, next) =>
 
 // Get /api/address/:userId
 router.get("/:userId", requireUser, async (req, res, next) => {
-  const  userId  = req.params.userId;
+  const { userId } = req.params.userId;
   try {
     const address = await getAddressByUserId(userId);
     res.send(address);
