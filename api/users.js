@@ -11,6 +11,7 @@ const {
   reactivateUser,
   updateUser,
   getAllUsers,
+  getUserInfo
 } = require("../db/users");
 
 // POST /api/users/register
@@ -161,6 +162,7 @@ router.get("/all", requireAdmin, async (req, res, next) => {
   }
 });
 
+//GET/api/users/
 router.get("/:userId/profile", requireUser, async (req, res, next) => {
   const id = req.params.userId
   try {
