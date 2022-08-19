@@ -54,7 +54,7 @@ router.patch("/:addressId/updateaddress", requireUser, async (req, res, next) =>
 
 // Get /api/address/:userId
 router.get("/:userId", requireUser, async (req, res, next) => {
-  const { userId } = req.params.userId;
+  const userId = req.params.userId;
   try {
     const address = await getAddressByUserId(userId);
     res.send(address);
