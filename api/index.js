@@ -70,6 +70,10 @@ router.use("/carts", cartsRouter);
 const cartItemsRouter = require('./cart_items');
 router.use('/cart_items', cartItemsRouter)
 
+// ROUTER: /api/wishlist_items
+const wishlist_itemsRouter = require('./wishlist_items');
+router.use('/wishlist_items', wishlist_itemsRouter)
+
 router.use("*", (req, res, next) => {
   res.status(404);
   res.render("error", { error: "Not Found" });
