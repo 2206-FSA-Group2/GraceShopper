@@ -142,10 +142,10 @@ router.patch("/reactivation", requireAdmin, async (req, res, next) => {
 
 // GET /api/users/me/:userId FOR PROFILE
 router.patch("/me/:userId", requireUser, async (req, res, next) => {
-  const { email, firstName, lastName } = req.body;
+  const { email, first_name, last_name } = req.body;
   const id = req.params.userId;
   try {
-    const updatedUser = await updateUser({id, email, firstName, lastName});
+    const updatedUser = await updateUser({id, email, first_name, last_name});
     res.send(updatedUser);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
