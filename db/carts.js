@@ -1,4 +1,5 @@
 const { attachItemsToCarts } = require("./cart_items.js");
+const { reduceInventory } = require('./products.js')
 const client = require("./client");
 
 //creates cart associated with the supplied user object; returns cart object.
@@ -23,7 +24,7 @@ async function createCart({ id }) {
 //sets the cart to purchased -- parameter is a cart object, returns cart object
 async function convertCartToPurchased({ id }) {
   try {
-    const {
+    let {
       rows: [cart],
     } = await client.query(
       `
@@ -33,6 +34,10 @@ async function convertCartToPurchased({ id }) {
             RETURNING *;`,
       [id]
     );
+    cart = await attachItemsToCarts([cart])
+    for(const item in cart.items) {
+      await reduceInventory(item.id, item.quantity)
+    }
     return cart;
   } catch (error) {
     throw error;
