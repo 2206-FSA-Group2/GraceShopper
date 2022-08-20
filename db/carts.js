@@ -160,7 +160,9 @@ async function getAllPurchasedCarts() {
       WHERE purchased = true;
       `
   )
-  return rows
+  const cartsWithItems = await attachItemsToCarts(rows)
+  const CartsWithOrders = await attachOrdertoCart(cartsWithItems)
+  return CartsWithOrders
   } catch(error) { throw error }
 }
 
