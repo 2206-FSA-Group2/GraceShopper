@@ -38,7 +38,7 @@ router.patch("/cart", requireUser, async (req, res, next) => {
       }
   });
 // GET /api/carts/newguestcart
-router.get("/newguestcart", async (req,res,next) => {
+router.post("/newguestcart", async (req,res,next) => {
   try{
     const data = req.body.cartItems
     cartItems = JSON.parse(data)
