@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getWishlistItemsByUser, assignItemToWishlist } = require("../db");
+const { getWishlistItemsByUser, assignItemToWishlist, removeItemFromWishlist } = require("../db");
 const { requireUser } = require("./utils");
 
 // GET /api/wishlist_items
@@ -34,8 +34,8 @@ router.delete("/:productId", requireUser, async (req, res, next) => {
   
     try {
   
-      const deletedwishlistItem = await deletedwishlistItem(id, product_id)
-      res.send(deletedwishlistItem);
+      const deletedItem = await removeItemFromWishlist(id, product_id)
+      res.send(deletedItem);
     } catch ({ name, message }) {
       next({ name, message, status: 401 });
     }
