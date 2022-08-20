@@ -352,6 +352,17 @@ async function attachReviewsToProducts(products) {
   }
 }
 
+async function reduceInventory(productId, quantity) {
+  try {
+    await client.query(`
+      UPDATE products
+      SET quantity_on_hand =
+      quantity_on_hand - $2 WHERE
+      id = $1;`,[productId, quantity])
+    
+  }catch(error){throw error}
+}
+
 
 module.exports = {
   createProduct,
@@ -365,5 +376,6 @@ module.exports = {
   getPhotosByProductId,
   assignCategory,
   attachPhotoToProduct,
-  attachPhotosToProducts
+  attachPhotosToProducts,
+  reduceInventory
 }
