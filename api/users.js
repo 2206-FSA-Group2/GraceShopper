@@ -145,7 +145,7 @@ router.patch("/me/:userId", requireUser, async (req, res, next) => {
   const { email, firstName, lastName } = req.body;
   const id = req.params.userId;
   try {
-    const updatedUser = await updateUser(id, email, firstName, lastName);
+    const updatedUser = await updateUser({id, email, firstName, lastName});
     res.send(updatedUser);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
