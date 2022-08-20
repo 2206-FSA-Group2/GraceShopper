@@ -4,6 +4,7 @@ const {
   removeItemFromCart,
   editCartItemQuantity,
   getActiveCartId,
+  getActiveCart,
 
 } = require("../db");
 
@@ -11,17 +12,29 @@ const {
 const { requireUser } = require('./utils')
 const router = express.Router();
 
+router.post("/savecart", requireUser, async(req,res,next) => {
+  try{
+  const {cartItems} = req.body
+  const existingCart = await getActiveCart(req.user)
+  //for each item in cartItems, check to see if it's not already in the cart; if it
+  //is not, assign the item to the cart.
+  for(item in cartItems) {
+    if (!existingCart.items.find(product => product.id === item.id)) {
+      assignItemToCart(existingCart.id, item.id, item.quantity, item.price)
+    }
+  }
+}catch(error) {throw error}
+
+})
 
 //POST /api/cart_items/newcartitem THIS ADDS ITEMS TO CART
 router.post("/newcartitem", requireUser, async (req, res, next) => {
   const userId = req.user.id;
   const { productId, quantity, price } = req.body;
   try {
-    console.log("XXYY getting active cart")
     const returnedId = await getActiveCartId(userId);
     const cartId = returnedId.id
-    console.log("cartId is ", cartId)
-    console.log(`calling assignItemToCart(${cartId}, ${productId}, ${quantity}, ${price})`)
+
 
     const addedCartItem = await assignItemToCart(
       cartId,
