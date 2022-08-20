@@ -47,7 +47,8 @@ async function getProductsById(id) {
         FROM products
         WHERE id=${id};
         `);
-    return product;
+    const productWithPhotos = await attachPhotosToProducts([product])
+    return productWithPhotos[0];
   } catch (error) {
     console.error(error);
   }
