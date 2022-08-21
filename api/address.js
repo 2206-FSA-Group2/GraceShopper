@@ -65,11 +65,11 @@ router.get("/:userId", requireUser, async (req, res, next) => {
 
 // DELETE /api/address/:addressId/deleteaddress
 router.delete(
-  "/:addressId/deleteaddress",
+  "/:addressId/:userId",
   requireUser,
   async (req, res, next) => {
     const id = req.params.addressId;
-    const { userId } = req.body;
+    const userId = req.params.userId;
     try {
       const deletedAddress = await deleteAddress(id, userId);
       res.send(deletedAddress);
