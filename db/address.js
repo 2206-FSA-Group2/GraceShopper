@@ -20,7 +20,7 @@ async function createAddress({userId, label, street1, street2, city, state, zipc
 async function getAddressByUserId(userId){
     try{
         const{
-            rows: [address],
+            rows
         } = await client.query (
             `SELECT *
             FROM addresses
@@ -28,7 +28,7 @@ async function getAddressByUserId(userId){
             `,
             [userId]
         );
-        return address;
+        return rows;
     } catch (error){
         console.error(error)
     }
