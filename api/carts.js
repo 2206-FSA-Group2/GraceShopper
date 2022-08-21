@@ -1,6 +1,6 @@
 const express = require("express");
 const { assignItemToCart, attachItemsToCarts } = require("../db");
-const { getActiveCart, getPurchasedCartsByUser, createCart, getAllPurchasedCarts } = require("../db/carts");
+const { getActiveCart, getPurchasedCartsByUser, createCart, getAllPurchasedCarts,convertCartToPurchased } = require("../db/carts");
 const { requireUser, requireAdmin } = require("./utils");
 const router = express.Router();
 
@@ -30,8 +30,8 @@ router.get("/mycarts", requireUser, async (req, res, next) => {
 router.patch("/cart", requireUser, async (req, res, next) => {
     const userId = req.user.id;
     try {
-        const {id} = await getActiveCart({ id:userId });
-        const purchasedCart = await convertCartToPurchased({id})
+        const cart = await getActiveCart({ id:userId });
+        const purchasedCart = await convertCartToPurchased(cart)
         res.send(purchasedCart)
       } catch ({ name, message }) {
         next({ name, message, status: 401 });
