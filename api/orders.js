@@ -31,7 +31,6 @@ router.post("/", requireUser, async (req, res, next) => {
   const { cart_id, address_id, status } = req.body;
 
   try {
-    console.log(cart_id, address_id, status)
     convertCartToPurchased({cart_id})
     const newOrder = await createOrder({
       cart_id,
