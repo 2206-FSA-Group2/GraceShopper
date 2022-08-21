@@ -27,7 +27,7 @@ router.get("/:orderId", requireAdmin, async (req, res, next) => {
   
 
 // POST /api/orders
-router.post("/", async (req, res, next) => {
+router.post("/", requireUser, async (req, res, next) => {
   const { cart_id, address_id, status } = req.body;
 
   try {
