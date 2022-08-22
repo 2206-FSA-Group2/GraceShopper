@@ -214,6 +214,13 @@ async function createInitialUsers() {
       },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
+    client.query(`
+    alter sequence users_id_seq restart with 9999;
+    INSERT INTO users(email, password,first_name, last_name, is_admin, is_active)
+    VALUES ('GUEST_USER','GUEST','GUEST','GUEST',false,false)
+    ON CONFLICT (email) DO NOTHING
+    RETURNING *
+    `)
 
     console.log("Users created:");
     console.log(users);
