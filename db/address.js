@@ -2,6 +2,7 @@ const client = require("./client");
 
 async function createAddress({userId, label, street1, street2, city, state, zipcode }){
     try{
+        console.log("args received at createAddress:" `(${userId}, ${label}, ${street1}, ${street2}, ${city}, ${state}, ${zipcode})`)
         const{
             rows: [address],
         } = await client.query (
