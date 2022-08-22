@@ -8,6 +8,23 @@ const {
 const { requireUser } = require("./utils");
 const router = express.Router();
 
+// POST /api/address/guestaddress 
+router.post("/guestaddress", async (req,res,next) => {
+  const { address } = req.body;
+  try{
+    const address = await createAddress(
+      null,
+      '',
+      address.street1,
+      address.street2,
+      address.city,
+      address.state,
+      address.zip,
+    )
+    res.send(address)
+  }catch(error){throw error}
+}
+)
 // POST /api/address/createaddress
 router.post("/createaddress", requireUser, async (req, res, next) => {
   const { userId, label, street1, street2, city, state, zipcode } = req.body;
