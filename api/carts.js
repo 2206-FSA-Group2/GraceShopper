@@ -38,12 +38,14 @@ router.patch("/cart", requireUser, async (req, res, next) => {
       }
   });
   
-// GET /api/carts/newguestcart
+// POST /api/carts/newguestcart
 router.post("/newguestcart", async (req,res,next) => {
   try{
     const data = req.body.cartItems
+    console.log("the data in newguestcart",data)
     cartItems = JSON.parse(data)
-    const cart = await createCart({id: 0})
+    console.log("cartItems", cartItems)
+    const cart = await createCart({id: 9999})
     if (cartItems.length) cartItems.map((item)=> { //put each item in the cart
        assignItemToCart(cart.id,item.id,item.quantity,item.price)
    })
