@@ -11,6 +11,7 @@ const router = express.Router();
 // POST /api/address/guestaddress 
 router.post("/guestaddress", async (req,res,next) => {
   const { address } = req.body;
+  console.log("address sent to guestaddress", address)
   try{
     const newAddress = await createAddress(
       9999,
