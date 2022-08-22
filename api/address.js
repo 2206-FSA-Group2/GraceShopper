@@ -12,16 +12,16 @@ const router = express.Router();
 router.post("/guestaddress", async (req,res,next) => {
   const { address } = req.body;
   try{
-    const address = await createAddress(
-      null,
-      '',
+    const newAddress = await createAddress(
+      9999,
+      address.label ? address.label : '',
       address.street1,
       address.street2,
       address.city,
       address.state,
       address.zip,
     )
-    res.send(address)
+    res.send(newAddress)
   }catch(error){throw error}
 }
 )
