@@ -13,7 +13,7 @@ router.post("/guestaddress", async (req,res,next) => {
   const { address } = req.body;
   console.log("address sent to guestaddress", address)
   try{
-    const newAddress = await createAddress(9999,'',address.street1,address.street2,address.city,address.state,address.zip)
+    const newAddress = await createAddress(address)
     res.send(newAddress)
   }catch(error){throw error}
 }
