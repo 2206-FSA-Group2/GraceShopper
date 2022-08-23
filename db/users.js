@@ -1,5 +1,6 @@
 const client = require("./client");
 const bcrypt = require('bcrypt');
+const { createCart } = require("./carts");
 
 //Encryption is commented out. Upon enabling, replace password to hashedpassword
 async function createUser({ email, password, firstName, lastName, isAdmin, isActive }){
@@ -16,6 +17,7 @@ try {
         `,
         [email, hashedPassword, firstName, lastName, isAdmin, isActive]
     );
+    createCart(user)
         return user
 } catch (error){
     throw error;
