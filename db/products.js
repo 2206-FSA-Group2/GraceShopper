@@ -28,11 +28,11 @@ async function getAllProducts() {
           FROM products
         `
     );
-    const productsWithPhotos = await attachPhotosToProducts(rows)
-    const finalProducts = await attachCategoriesToProducts(productsWithPhotos)
-    const productsReviewed = await attachReviewsToProducts(finalProducts)
- 
-    return productsReviewed
+    const productsWithPhotos = await attachPhotosToProducts(rows);
+    const finalProducts = await attachCategoriesToProducts(productsWithPhotos);
+    const productsReviewed = await attachReviewsToProducts(finalProducts);
+
+    return productsReviewed;
   } catch (error) {
     console.error(error);
   }
@@ -47,7 +47,7 @@ async function getProductsById(id) {
         FROM products
         WHERE id=${id};
         `);
-    const productWithPhotos = await attachPhotosToProducts([product])
+    const productWithPhotos = await attachPhotosToProducts([product]);
     return productWithPhotos[0];
   } catch (error) {
     console.error(error);
@@ -259,7 +259,6 @@ async function attachPhotosToProducts(products) {
   const productIds = products.map((product) => product.id);
   if (!productIds?.length) return [];
   try {
-
     const { rows: photos } = await client.query(
       `
           SELECT product_photos.*
@@ -270,9 +269,7 @@ async function attachPhotosToProducts(products) {
       productIds
     );
 
-
     for (const product of productsToReturn) {
-
       const photosToAdd = photos.filter(
         (photo) => photo.product_id === product.id
       );
@@ -285,15 +282,12 @@ async function attachPhotosToProducts(products) {
   }
 }
 
-
 async function attachCategoriesToProducts(products) {
-
   const productsToReturn = [...products];
   const binds = products.map((_, index) => `$${index + 1}`).join(", ");
   const productIds = products.map((product) => product.id);
   if (!productIds?.length) return [];
   try {
-
     const { rows: categories } = await client.query(
       `
           SELECT categories.*
@@ -304,9 +298,7 @@ async function attachCategoriesToProducts(products) {
       productIds
     );
 
-
     for (const product of productsToReturn) {
-
       const categoriesToAdd = categories.filter(
         (category) => category.product_id === product.id
       );
@@ -320,13 +312,11 @@ async function attachCategoriesToProducts(products) {
 }
 
 async function attachReviewsToProducts(products) {
-
   const productsToReturn = [...products];
   const binds = products.map((_, index) => `$${index + 1}`).join(", ");
   const productIds = products.map((product) => product.id);
   if (!productIds?.length) return [];
   try {
-
     const { rows: reviews } = await client.query(
       `
           SELECT reviews.*
@@ -337,9 +327,7 @@ async function attachReviewsToProducts(products) {
       productIds
     );
 
-
     for (const product of productsToReturn) {
-
       const reviewsToAdd = reviews.filter(
         (review) => review.product_id === product.id
       );
@@ -354,15 +342,18 @@ async function attachReviewsToProducts(products) {
 
 async function reduceInventory(productId, quantity) {
   try {
-    await client.query(`
+    await client.query(
+      `
       UPDATE products
       SET quantity_on_hand =
       quantity_on_hand - $2 WHERE
-      id = $1;`,[productId, quantity])
-    
-  }catch(error){throw error}
+      id = $1;`,
+      [productId, quantity]
+    );
+  } catch (error) {
+    throw error;
+  }
 }
-
 
 module.exports = {
   createProduct,
@@ -377,5 +368,5 @@ module.exports = {
   assignCategory,
   attachPhotoToProduct,
   attachPhotosToProducts,
-  reduceInventory
-}
+  reduceInventory,
+};

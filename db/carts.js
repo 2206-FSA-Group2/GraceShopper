@@ -1,5 +1,5 @@
 const { attachItemsToCarts } = require("./cart_items.js");
-const { reduceInventory } = require('./products.js')
+const { reduceInventory } = require("./products.js");
 const client = require("./client");
 
 //creates cart associated with the supplied user object; returns cart object.
@@ -34,9 +34,9 @@ async function convertCartToPurchased({ id }) {
             RETURNING *;`,
       [id]
     );
-    cart = await attachItemsToCarts([cart])
-    for(const item in cart.items) {
-      await reduceInventory(item.id, item.quantity)
+    cart = await attachItemsToCarts([cart]);
+    for (const item in cart.items) {
+      await reduceInventory(item.id, item.quantity);
     }
     return cart;
   } catch (error) {
@@ -81,8 +81,8 @@ async function getPurchasedCartsByUser({ id }) {
             `,
       [id]
     );
-    const cartsWithItems = await attachItemsToCarts(carts)
-    const CartsWithOrders = await attachOrdertoCart(cartsWithItems)
+    const cartsWithItems = await attachItemsToCarts(carts);
+    const CartsWithOrders = await attachOrdertoCart(cartsWithItems);
     return CartsWithOrders;
   } catch (error) {
     throw error;
@@ -90,13 +90,11 @@ async function getPurchasedCartsByUser({ id }) {
 }
 
 async function attachOrdertoCart(carts) {
-
   const cartsToReturn = [...carts];
   const binds = carts.map((_, index) => `$${index + 1}`).join(", ");
   const cartsIds = carts.map((cart) => cart.id);
   if (!cartsIds?.length) return [];
   try {
-
     const { rows: orders } = await client.query(
       `
           SELECT orders.*
@@ -107,12 +105,8 @@ async function attachOrdertoCart(carts) {
       cartsIds
     );
 
-
     for (const cart of cartsToReturn) {
-
-      const ordersToAdd = orders.filter(
-        (order) => order.cart_id === cart.id
-      );
+      const ordersToAdd = orders.filter((order) => order.cart_id === cart.id);
 
       cart.order = ordersToAdd;
     }
@@ -122,48 +116,58 @@ async function attachOrdertoCart(carts) {
   }
 }
 
-
 async function getActiveCartId(userId) {
   try {
-    let {rows: [cartId]} = await client.query(`
+    let {
+      rows: [cartId],
+    } = await client.query(
+      `
     SELECT id FROM carts
     WHERE carts.user_id = $1
-    AND purchased = false;`,[userId])
+    AND purchased = false;`,
+      [userId]
+    );
 
-    return cartId
-
-
-  }catch(error){throw error}
+    return cartId;
+  } catch (error) {
+    throw error;
+  }
 }
 //gets active cart --takes user object and returns cart object
 async function getActiveCart({ id }) {
-    try {
-      console.log("starting to get the cart")
-    let {rows: [cart]} = await client.query(
-        `SELECT * FROM carts
+  try {
+    console.log("starting to get the cart");
+    let {
+      rows: [cart],
+    } = await client.query(
+      `SELECT * FROM carts
         WHERE carts.user_id = $1
         AND purchased = false;
         `,
-        [id]
-    )
+      [id]
+    );
 
     if (cart) return attachItemsToCarts([cart]);
-    const newCart = createCart({id});
-    return attachItemsToCarts([newCart])
-    } catch(error) { throw error }
+    const newCart = createCart({ id });
+    return attachItemsToCarts([newCart]);
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getAllPurchasedCarts() {
   try {
-  const {rows} = await client.query(
+    const { rows } = await client.query(
       `SELECT * FROM carts
       WHERE purchased = true;
       `
-  )
-  const cartsWithItems = await attachItemsToCarts(rows)
-  const CartsWithOrders = await attachOrdertoCart(cartsWithItems)
-  return CartsWithOrders
-  } catch(error) { throw error }
+    );
+    const cartsWithItems = await attachItemsToCarts(rows);
+    const CartsWithOrders = await attachOrdertoCart(cartsWithItems);
+    return CartsWithOrders;
+  } catch (error) {
+    throw error;
+  }
 }
 
 module.exports = {
@@ -173,5 +177,5 @@ module.exports = {
   convertCartToPurchased,
   getActiveCart,
   getAllPurchasedCarts,
-  getActiveCartId
+  getActiveCartId,
 };

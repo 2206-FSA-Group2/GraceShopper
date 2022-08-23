@@ -33,39 +33,43 @@ async function getAllOrders() {
 }
 
 async function getOrdersByUserId(id) {
-    try {
-      const {
-        rows
-      } = await client.query(`
+  try {
+    const { rows } = await client.query(
+      `
           SELECT *   
           FROM orders
           WHERE user_id=$1;
-          `, [id]);
-      return rows;
-    } catch (error) {
-      console.error(error);
-    }
+          `,
+      [id]
+    );
+    return rows;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function getOrderByOrderId(id) {
-    try {
-      const {
-        rows: [order]
-      } = await client.query(`
+  try {
+    const {
+      rows: [order],
+    } = await client.query(
+      `
           SELECT *   
           FROM orders
           WHERE id=$1;
-          `, [id]);
-      return order;
-    } catch (error) {
-      console.error(error);
-    }
+          `,
+      [id]
+    );
+    return order;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-async function updateOrder({id, ...fields}){
-    const setString = Object.keys(fields)
+async function updateOrder({ id, ...fields }) {
+  const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(', ');
+    .join(", ");
   try {
     const {
       rows: [order],
@@ -81,8 +85,13 @@ async function updateOrder({id, ...fields}){
     return order;
   } catch (error) {
     throw error;
-    }
+  }
 }
 
-
-module.exports = { createOrder, getAllOrders, getOrdersByUserId, getOrderByOrderId, updateOrder };
+module.exports = {
+  createOrder,
+  getAllOrders,
+  getOrdersByUserId,
+  getOrderByOrderId,
+  updateOrder,
+};
