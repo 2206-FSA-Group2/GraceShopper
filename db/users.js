@@ -35,7 +35,7 @@ async function getUser({email, password}){
                 rows: [user],
               } = await client.query(
                 `
-              SELECT id, email, is_admin as "isAdmin"
+              SELECT id, email, is_admin as "isAdmin", is_active as "isActive"
               FROM users
               WHERE email=$1 AND password=$2;
               `,
