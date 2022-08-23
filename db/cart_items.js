@@ -51,7 +51,6 @@ async function editCartItemQuantity({ id, quantity }) {
   }
 }
 
-
 async function attachItemsToCarts(carts) {
   const cartsToReturn = [...carts];
   const binds = carts.map((_, index) => `$${index + 1}`).join(", ");
@@ -78,10 +77,10 @@ async function attachItemsToCarts(carts) {
         (product) => product.cart_id === cart.id
       );
       for (const product of productsToAdd) {
-        product.images = await getPhotosByProductId(product.id)
+        product.images = await getPhotosByProductId(product.id);
       }
 
-      cart.items = productsToAdd
+      cart.items = productsToAdd;
     }
     return cartsToReturn;
   } catch (error) {
@@ -89,4 +88,9 @@ async function attachItemsToCarts(carts) {
   }
 }
 
-module.exports = { attachItemsToCarts, assignItemToCart, removeItemFromCart, editCartItemQuantity };
+module.exports = {
+  attachItemsToCarts,
+  assignItemToCart,
+  removeItemFromCart,
+  editCartItemQuantity,
+};

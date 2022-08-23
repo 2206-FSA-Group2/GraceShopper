@@ -47,7 +47,7 @@ const usersRouter = require("./users");
 router.use("/users", usersRouter);
 
 // ROUTER : /api/address
-const addressRouter = require('./address');
+const addressRouter = require("./address");
 router.use("/address", addressRouter);
 
 // ROUTER: /api/products
@@ -67,12 +67,12 @@ const cartsRouter = require("./carts");
 router.use("/carts", cartsRouter);
 
 // ROUTER: /api/cart_items
-const cartItemsRouter = require('./cart_items');
-router.use('/cart_items', cartItemsRouter)
+const cartItemsRouter = require("./cart_items");
+router.use("/cart_items", cartItemsRouter);
 
 // ROUTER: /api/wishlist_items
-const wishlist_itemsRouter = require('./wishlist_items');
-router.use('/wishlist_items', wishlist_itemsRouter)
+const wishlist_itemsRouter = require("./wishlist_items");
+router.use("/wishlist_items", wishlist_itemsRouter);
 
 router.use("*", (req, res, next) => {
   res.status(404);

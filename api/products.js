@@ -1,7 +1,17 @@
 const express = require("express");
-const { getAllProducts, createProduct, updateProduct, destroyProduct, assignItemToCart, assignCategory, attachPhotoToProduct, getAllCategories, getPhotosByProductId, getProductsById } = require("../db");
+const {
+  getAllProducts,
+  createProduct,
+  updateProduct,
+  destroyProduct,
+  assignCategory,
+  attachPhotoToProduct,
+  getAllCategories,
+  getPhotosByProductId,
+  getProductsById,
+} = require("../db");
 const router = express.Router();
-const { requireUser, requireAdmin } = require("./utils");
+const { requireAdmin } = require("./utils");
 
 // GET /api/products
 router.get("/", async (req, res, next) => {
@@ -36,13 +46,12 @@ router.get("/:productId", async (req, res, next) => {
   const id = Number(req.params.productId);
 
   try {
-    const product = await getProductsById(id)
+    const product = await getProductsById(id);
     res.send(product);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
   }
 });
-
 
 // PATCH /api/products/:productId
 router.patch("/:productId", requireAdmin, async (req, res, next) => {
@@ -51,10 +60,16 @@ router.patch("/:productId", requireAdmin, async (req, res, next) => {
   const { name, description, price, quantity, isActive } = req.body;
 
   try {
-    const updatedProduct = await updateProduct({id:id ,name:name, description:description, price:price, quantity_on_hand:quantity, is_active:isActive });
+    const updatedProduct = await updateProduct({
+      id: id,
+      name: name,
+      description: description,
+      price: price,
+      quantity_on_hand: quantity,
+      is_active: isActive,
+    });
 
     res.send(updatedProduct);
-
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
   }
@@ -65,7 +80,6 @@ router.delete("/:productId", requireAdmin, async (req, res, next) => {
   const id = Number(req.params.productId);
 
   try {
-
     const deletedProduct = await destroyProduct(id);
     res.send(deletedProduct);
   } catch ({ name, message }) {
@@ -75,15 +89,12 @@ router.delete("/:productId", requireAdmin, async (req, res, next) => {
 
 // POST /api/products/category/:productId
 router.post("/category/:productId", requireAdmin, async (req, res, next) => {
-
-  const { name, product_id} = req.body;
+  const { name, product_id } = req.body;
 
   try {
-
-    const newCategory = await assignCategory({name, product_id})
+    const newCategory = await assignCategory({ name, product_id });
 
     res.send(newCategory);
-
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
   }
@@ -91,15 +102,12 @@ router.post("/category/:productId", requireAdmin, async (req, res, next) => {
 
 // POST /api/products/addPhoto/:productId
 router.post("/addPhoto/:productId", requireAdmin, async (req, res, next) => {
-
-  const {product_id, url, priority} = req.body;
+  const { product_id, url, priority } = req.body;
 
   try {
-
-    const newPhoto = await attachPhotoToProduct({product_id, url, priority})
+    const newPhoto = await attachPhotoToProduct({ product_id, url, priority });
 
     res.send(newPhoto);
-    
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
   }
@@ -120,12 +128,11 @@ router.get("/photos/:productId", async (req, res, next) => {
   const id = Number(req.params.productId);
 
   try {
-    const photos = await getPhotosByProductId(id)
+    const photos = await getPhotosByProductId(id);
     res.send(photos);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
   }
 });
-
 
 module.exports = router;

@@ -1,5 +1,11 @@
 const express = require("express");
-const { getAllOrders, createOrder, updateOrder, getOrderByOrderId, convertCartToPurchased } = require("../db");
+const {
+  getAllOrders,
+  createOrder,
+  updateOrder,
+  getOrderByOrderId,
+  convertCartToPurchased,
+} = require("../db");
 const router = express.Router();
 const { requireUser, requireAdmin } = require("./utils");
 
@@ -15,30 +21,28 @@ router.get("/", requireAdmin, async (req, res, next) => {
 
 // GET /api/orders/:orderId
 router.get("/:orderId", requireAdmin, async (req, res, next) => {
-    const id = Number(req.params.orderId);
+  const id = Number(req.params.orderId);
 
-    try {
-      const order = await getOrderByOrderId(id)
-      res.send(order);
-    } catch ({ name, message }) {
-      next({ name, message, status: 401 });
-    }
-  });
-  
+  try {
+    const order = await getOrderByOrderId(id);
+    res.send(order);
+  } catch ({ name, message }) {
+    next({ name, message, status: 401 });
+  }
+});
 
 // POST /api/orders
-router.post("/",  async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   const { cart_id, address_id, status } = req.body;
 
   try {
-    convertCartToPurchased({id: cart_id})
+    convertCartToPurchased({ id: cart_id });
     const newOrder = await createOrder({
       cart_id,
       address_id,
       status,
     });
 
-    
     res.send(newOrder);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });

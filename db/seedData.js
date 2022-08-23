@@ -7,18 +7,13 @@ const categoryLinks = {};
 const photoLinks = {};
 let allProducts = [];
 
-
+const { createUser, getUser, getUserById } = require("./users");
 const {
-  createUser,
-  getUser,
-  getUserById
-} = require('./users');
-const {
-  createCart, getActiveCart, convertCartToPurchased
-} = require('./carts')
-const {
-  assignItemToCart
-} = require('./cart_items')
+  createCart,
+  getActiveCart,
+  convertCartToPurchased,
+} = require("./carts");
+const { assignItemToCart } = require("./cart_items");
 
 const {
   createProduct,
@@ -30,7 +25,6 @@ const {
 const { createAddress } = require("./address");
 const { createInitialReviews } = require("./reviews");
 const { createOrder } = require("./orders");
-
 
 function readInventoryFile() {
   //read the inventory seed file and create objects to be used by product table seeder function.
@@ -220,7 +214,7 @@ async function createInitialUsers() {
     VALUES ('GUEST_USER','GUEST','GUEST','GUEST',false,false)
     ON CONFLICT (email) DO NOTHING
     RETURNING *
-    `)
+    `);
 
     console.log("Users created:");
     console.log(users);
@@ -231,60 +225,59 @@ async function createInitialUsers() {
   }
 }
 
-async function loginInitialUsers(){
-  console.log('Logging in initial users...');
+async function loginInitialUsers() {
+  console.log("Logging in initial users...");
   try {
-    const email = "albert"
-    const password = "bertie99"
-    const users = await getUser({email, password});
-    console.log('Users Logged in');
+    const email = "albert";
+    const password = "bertie99";
+    const users = await getUser({ email, password });
+    console.log("Users Logged in");
     console.log(users);
-    console.log('Finished Logging users!');
+    console.log("Finished Logging users!");
   } catch (error) {
-    console.error('Error logging users!');
+    console.error("Error logging users!");
     throw error;
   }
 }
 
-async function createInitialAddress(){
-  console.log('Creating initial address...');
-  try{
+async function createInitialAddress() {
+  console.log("Creating initial address...");
+  try {
     const addressToCreate = [
       {
         userId: 1,
-        label: 'This is my primary residence',
-        street1: '428 Albert Street',
-        street2: '812 Yellow Lane',
-        city: 'New York City',
-        state: 'NY',
+        label: "This is my primary residence",
+        street1: "428 Albert Street",
+        street2: "812 Yellow Lane",
+        city: "New York City",
+        state: "NY",
         zipcode: 98876,
       },
       {
         userId: 2,
-        label: 'This is my work residence',
-        street1: '428 Sandra Street',
-        street2: '218 Green Lane',
-        city: 'San Diego',
-        state: 'CA',
+        label: "This is my work residence",
+        street1: "428 Sandra Street",
+        street2: "218 Green Lane",
+        city: "San Diego",
+        state: "CA",
         zipcode: 98876,
       },
       {
         userId: 3,
-        label: 'This is my secondary residence',
-        street1: '428 Gandalf Street',
-        street2: '128 Blue Lane',
-        city: 'Houston',
-        state: 'TX',
+        label: "This is my secondary residence",
+        street1: "428 Gandalf Street",
+        street2: "128 Blue Lane",
+        city: "Houston",
+        state: "TX",
         zipcode: 98876,
-      }
+      },
     ];
     const address = await Promise.all(addressToCreate.map(createAddress));
 
     console.log(address);
-    console.log('Finished creating address..');
-
-  } catch (error){
-    console.error('Error creating address');
+    console.log("Finished creating address..");
+  } catch (error) {
+    console.error("Error creating address");
     throw error;
   }
 }
@@ -383,13 +376,11 @@ async function createInitialCarts() {
 }
 
 async function assignInitialCartItems() {
-  console.log("starting to assign items")
-  const item = await assignItemToCart(1, 7, 1, 15.99)
-  const item2 = await assignItemToCart(1, 11, 1, 1.99)
-  const item3 = await assignItemToCart(1, 3, 1, 155.99)
-  const cart=await getActiveCart({id:1})
-  console.log(777, cart)
-
+  console.log("starting to assign items");
+  const item = await assignItemToCart(1, 7, 1, 15.99);
+  const item2 = await assignItemToCart(1, 11, 1, 1.99);
+  const item3 = await assignItemToCart(1, 3, 1, 155.99);
+  const cart = await getActiveCart({ id: 1 });
 }
 
 async function rebuildDB() {
@@ -403,11 +394,15 @@ async function rebuildDB() {
     await createInitialProducts();
     await createInitialCarts();
     await assignInitialCartItems();
-    await createInitialReviews()
-    const cartId = await getActiveCart({id:1})
-    const cartPurchased = await convertCartToPurchased({id:cartId[0].id})
-    const cartPurchasedId = cartPurchased.id
-    await createOrder({ cart_id: cartPurchasedId, address_id: 1, status: "Delivered" })
+    await createInitialReviews();
+    const cartId = await getActiveCart({ id: 1 });
+    const cartPurchased = await convertCartToPurchased({ id: cartId[0].id });
+    const cartPurchasedId = cartPurchased.id;
+    await createOrder({
+      cart_id: cartPurchasedId,
+      address_id: 1,
+      status: "Delivered",
+    });
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;

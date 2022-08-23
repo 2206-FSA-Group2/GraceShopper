@@ -11,7 +11,7 @@ const {
   reactivateUser,
   updateUser,
   getAllUsers,
-  getUserInfo
+  getUserInfo,
 } = require("../db/users");
 
 // POST /api/users/register
@@ -74,7 +74,6 @@ router.post("/login", async (req, res, next) => {
     const user = await getUser({ email, password });
 
     if (user) {
-       
       const token = jwt.sign(
         { id: user.id, email: user.email },
         process.env.JWT_SECRET
@@ -145,7 +144,7 @@ router.patch("/me/:userId", requireUser, async (req, res, next) => {
   const { first_name, last_name } = req.body;
   const id = req.params.userId;
   try {
-    const updatedUser = await updateUser({id, first_name, last_name});
+    const updatedUser = await updateUser({ id, first_name, last_name });
     res.send(updatedUser);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
@@ -164,7 +163,7 @@ router.get("/all", requireAdmin, async (req, res, next) => {
 
 //GET/api/users/
 router.get("/:userId/profile", requireUser, async (req, res, next) => {
-  const id = req.params.userId
+  const id = req.params.userId;
   try {
     const users = await getUserInfo(id);
     res.send(users);
@@ -176,9 +175,9 @@ router.get("/:userId/profile", requireUser, async (req, res, next) => {
 // GET /api/users/promote/:userId FOR PROFILE
 router.patch("/promote/:userId", requireAdmin, async (req, res, next) => {
   const id = req.params.userId;
-  const is_admin = true
+  const is_admin = true;
   try {
-    const updatedUser = await updateUser({id, is_admin});
+    const updatedUser = await updateUser({ id, is_admin });
     res.send(updatedUser);
   } catch ({ name, message }) {
     next({ name, message, status: 401 });
