@@ -44,7 +44,6 @@ router.post("/newcartitem", requireUser, async (req, res, next) => {
     );
     res.send(addedCartItem);
   } catch ({ name, message }) {
-    message = message + "cartId: " + cartId + "productId: " + productId + "quantity" + quantity + "price" + price
     next({ name, message, status: 401 });
   }
 });
