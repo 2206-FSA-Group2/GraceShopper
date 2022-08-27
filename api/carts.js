@@ -53,7 +53,7 @@ router.post("/newguestcart", async (req, res, next) => {
     if (cartItems.length)
       cartItems.map((item) => {
         //put each item in the cart
-        assignItemToCart(cart.id, item.id, item.quantity, item.price);
+        await assignItemToCart(cart.id, item.id, item.quantity, item.price);
       });
     fullCart = await attachItemsToCarts([cart]);
     res.send(fullCart);
