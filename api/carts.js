@@ -1,5 +1,6 @@
 const express = require("express");
-const { assignItemToCart, attachItemsToCarts } = require("../db");
+const { del } = require("express/lib/application");
+const { assignItemToCart, attachItemsToCarts, deleteAbandonedGuestCarts } = require("../db");
 const {
   getActiveCart,
   getPurchasedCartsByUser,
@@ -82,3 +83,9 @@ router.get("/allcarts", requireAdmin, async (req, res, next) => {
   }
 });
 module.exports = router;
+
+router.post("/guestcartcleanup", requireAdmin, async (req, res, next) => {
+  try {
+    await deleteAbandonedGuestCarts()
+  }catch(error){throw error}
+})
