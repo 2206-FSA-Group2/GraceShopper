@@ -170,6 +170,25 @@ async function getAllPurchasedCarts() {
   }
 }
 
+async function deleteAbandonedGuestCarts() {
+  try {
+    await client.query(
+      `DELETE FROM cart_items WHERE id IN 
+        (
+          SELECT cart_items.id as ccid FROM
+          cart_itmes JOIN carts ON
+          carts.id = cart_items.cart_id
+          WHERE purchased = false and
+          user_id = 9999
+        );
+       DELETE FROM carts WHERE
+       purchased = false AND
+       user_id = 9999;
+      `
+    )
+  } catch(error) {throw error}
+}
+
 module.exports = {
   createCart,
   deleteActiveCart,
@@ -178,4 +197,5 @@ module.exports = {
   getActiveCart,
   getAllPurchasedCarts,
   getActiveCartId,
+  deleteAbandonedGuestCarts
 };
