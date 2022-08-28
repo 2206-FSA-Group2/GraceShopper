@@ -87,5 +87,6 @@ module.exports = router;
 router.post("/guestcartcleanup", requireAdmin, async (req, res, next) => {
   try {
     await deleteAbandonedGuestCarts()
+    res.send({success:true})
   }catch(error){throw error}
 })
