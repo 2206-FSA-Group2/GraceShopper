@@ -192,7 +192,7 @@ async function countPendingGuestCarts() {
     `)
     const count = await result.count;
     console.log(count, result)
-    return count;
+    return {count};
   } catch(error) {throw error}
 }
 
