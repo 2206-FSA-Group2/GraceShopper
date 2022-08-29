@@ -184,7 +184,7 @@ async function deleteAbandonedGuestCarts() {
 
 async function countPendingGuestCarts() {
   try {
-    const [result] = await client.query(`
+    const result = await client.query(`
     SELECT COUNT(id) 
     FROM carts 
     WHERE purchased = FALSE 
