@@ -94,6 +94,6 @@ router.post("/guestcartcleanup", requireAdmin, async (req, res, next) => {
 router.get("/guestcartcleanup", requireAdmin, async (req, res) => {
   try{
     const count = await countPendingGuestCarts();
-    res.send({count})
+    res.send({"count": count})
   }catch(error){throw error}
 })
