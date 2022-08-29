@@ -191,8 +191,7 @@ async function countPendingGuestCarts() {
     AND user_id = 9999;
     `)
     const count = await result.count;
-    console.log(count, result)
-    return {"result": count};
+    return count;
   } catch(error) {throw error}
 }
 
