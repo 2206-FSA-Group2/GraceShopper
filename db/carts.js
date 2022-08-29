@@ -172,13 +172,27 @@ async function getAllPurchasedCarts() {
 
 async function deleteAbandonedGuestCarts() {
   try {
-    await client.query( //getting realtion "cart_items" does not exist
+    await client.query(
       `DELETE FROM cart_items WHERE id IN (SELECT cart_items.id as ccid FROM cart_items JOIN carts ON carts.id = cart_items.cart_id WHERE purchased = FALSE AND user_id = 9999);
        DELETE FROM carts WHERE
        purchased = FALSE AND
        user_id = 9999;
       `
     )
+  } catch(error) {throw error}
+}
+
+async function countPendingGuestCarts() {
+  try {
+    const [result] = await client.query(`
+    SELECT COUNT(id) 
+    FROM carts 
+    WHERE purchased = FALSE 
+    AND user_id = 9999;
+    `)
+    const count = await result.count;
+    console.log(count, result)
+    return count;
   } catch(error) {throw error}
 }
 
