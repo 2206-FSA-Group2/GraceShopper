@@ -204,5 +204,6 @@ module.exports = {
   getActiveCart,
   getAllPurchasedCarts,
   getActiveCartId,
-  deleteAbandonedGuestCarts
+  deleteAbandonedGuestCarts,
+  countPendingGuestCarts
 };
