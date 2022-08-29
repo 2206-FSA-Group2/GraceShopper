@@ -190,7 +190,7 @@ async function countPendingGuestCarts() {
     WHERE purchased = FALSE 
     AND user_id = 9999;
     `)
-    const count = await result
+    const count = await result.rows[0].count
     console.log("HERE IS THE COUNT AUG29", count)
     return count;
   } catch(error) {throw error}
